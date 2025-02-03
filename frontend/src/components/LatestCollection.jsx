@@ -19,7 +19,7 @@ const LatestCollection = () => {
             <div className='text-center py-8 text-3xl'>
                 <Title text1={'LATEST'} text2={'COLLECTION'} />
                 <p className='w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600'>
-                    Explore Acadex's latest collection—dorm essentials, unique finds, and more for your best campus life!
+                    Explore Student-X's latest collection—dorm essentials, unique finds, and more for your best campus life!
                 </p>
             </div>
             {/* Rendering products */}
