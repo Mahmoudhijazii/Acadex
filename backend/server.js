@@ -6,6 +6,8 @@ const app = express();
 
 app.use(express.json());
 
+app.use('/api/users', userRoutes); 
+
 
 // Start server
 const PORT = 3001; 
