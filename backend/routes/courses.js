@@ -4,10 +4,7 @@ const { getPosts , getCourses, postCourse} = require ('../controllers/coursesCon
 const { authenticate } = require('../middleware/auth');
 
 //fetch all courses posts
-router.get('/posts',authenticate, getPosts);
-
-//fetch all courses
-router.get('/courses', authenticate,  getCourses);
+router.get('/posts', getPosts);
 
 //create a post
 router.post('/posts', authenticate, postCourse);

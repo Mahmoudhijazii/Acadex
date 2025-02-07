@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./sequelize');
 
+
 const User = sequelize.define('User',
   {
     id : {
@@ -29,8 +30,8 @@ const User = sequelize.define('User',
       type : DataTypes.TEXT
     },
     role: {
-      type: DataTypes.ENUM('student', 'admin'),
-      defaultValue: 'student',
+      type: DataTypes.ENUM('user', 'admin'),
+      defaultValue: 'user',
     },    
     verification_code : {
       type : DataTypes.STRING(6)
@@ -39,31 +40,13 @@ const User = sequelize.define('User',
       type : DataTypes.BOOLEAN,
       defaultValue : false
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-    },
   }, {
+    timestamps: true,
     tableName : 'users'
   }
 );
 
-const Course = sequelize.define('Course',
-  {
-    id : {
-      type : DataTypes.INTEGER,
-      autoIncrement : true,
-      primaryKey : true
-    },
-    course_name : {
-      type : DataTypes.STRING(100),
-      allowNull : false,
-      unique : true 
-    },
-  }, {
-    tableName : 'courses'
-  }
-);
+
 
 const TutorCourse = sequelize.define('TutorCourse', 
   {
@@ -76,9 +59,10 @@ const TutorCourse = sequelize.define('TutorCourse',
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    course_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    course_name : {
+      type : DataTypes.STRING(100),
+      allowNull : false,
+      unique : true 
     },
     description: {
       type: DataTypes.TEXT, 
@@ -86,7 +70,8 @@ const TutorCourse = sequelize.define('TutorCourse',
     }
   }, 
   {
-    tableName: 'tutor_courses',
+    timestamps: true,
+    tableName: 'tutor_courses'
   }
 );
 
@@ -111,10 +96,6 @@ const Dorm = sequelize.define('Dorm',
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
   }, {
     tableName: 'dorms',
@@ -158,10 +139,6 @@ const Listing = sequelize.define('Listing',
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
   }, {
     tableName: 'listings',
@@ -209,7 +186,7 @@ const ChatMessage = sequelize.define('ChatMessage',
     },
     timestamp: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
     },
   }, {
     tableName: 'chat_messages',
@@ -219,8 +196,6 @@ const ChatMessage = sequelize.define('ChatMessage',
 User.hasMany(TutorCourse, { foreignKey: 'user_id' });
 TutorCourse.belongsTo(User, { foreignKey: 'user_id' });
 
-Course.hasMany(TutorCourse, { foreignKey: 'course_id' });
-TutorCourse.belongsTo(Course, { foreignKey: 'course_id' });
 
 Dorm.hasMany(DormImage, { foreignKey: 'dorm_id' });
 DormImage.belongsTo(Dorm, { foreignKey: 'dorm_id' });
@@ -231,4 +206,4 @@ ListingImage.belongsTo(Listing, { foreignKey: 'listing_id' });
 ChatMessage.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
 ChatMessage.belongsTo(User, { foreignKey: 'receiver_id', as: 'receiver' });
 
-export { sequelize, User, Course, TutorCourse, Dorm, DormImage, Listing, ListingImage, ChatMessage };
+module.exports = { sequelize, User, TutorCourse, Dorm, DormImage, Listing, ListingImage, ChatMessage };

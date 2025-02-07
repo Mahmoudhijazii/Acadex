@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 const sendVerificationEmail = async (email, code) => {
     try {
         await transporter.sendMail({
-            from: '"Acadex Verification" <no-reply@aust.edu.lb>', 
+            from: '"Student-X Verification" <no-reply@aust.edu.lb>', 
             to: email, 
             subject: 'Your Verification Code', 
             text: `Your verification code is: ${code}`,

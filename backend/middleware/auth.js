@@ -6,9 +6,11 @@ const authenticate = (req, res, next) => {
 
     try {
         const verified = jwt.verify(token, 'mostafa');
-        req.user = verified; // Attach user info to request
+        req.user = verified;
+        console.log('User authenticated:', req.user); // Debugging
         next();
     } catch (error) {
+        console.error('Token verification failed:', error.message);
         res.status(400).json({ error: 'Invalid token.' });
     }
 };

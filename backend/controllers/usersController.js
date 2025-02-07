@@ -2,9 +2,9 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {User} = require('../models');
-const sendVerificationEmail = require('./mailer'); 
+const sendVerificationEmail = require('../mailer'); 
 
-const temUsers = {};
+const tempUsers = {};
 
 const signup = async (req , res) => {
     const { name , email , password , profile_pic , bio } = req.body;
@@ -31,15 +31,21 @@ const signup = async (req , res) => {
     }
 };
 
-const verifyUser = async (req , res) => {
-    const {email, verificationCode} = req.body;
-    const tempUser = tempUser[email];
-    if(!tempUser){
-        return res.status(400).json({ error: 'User not found or already verified.' });
+const verifyUser = async (req, res) => {
+    const { verificationCode } = req.body; // Only get verification code from user
+    console.log("Received Verification Code:", verificationCode);
+    console.log("Current Temp Users:", tempUsers);
+
+    // Find the user in tempUsers by matching verificationCode
+    const tempUserEntry = Object.entries(tempUsers).find(([email, user]) => user.verificationCode === parseInt(verificationCode, 10));
+
+    if (!tempUserEntry) {
+        return res.status(400).json({ error: 'Invalid verification code or user not found.' });
     }
-    if (tempUser.verificationCode !== parseInt(verificationCode, 10)){
-        return res.status(400).json({ error: 'Invalid verification code.' });
-    }
+
+    const [email, tempUser] = tempUserEntry;
+    console.log("Matching User Found:", tempUser);
+
     try {
         await User.create({
             name: tempUser.name,
@@ -47,20 +53,22 @@ const verifyUser = async (req , res) => {
             password: tempUser.hashedPass,
             profile_pic: tempUser.profile_pic,
             bio: tempUser.bio,
-            role: 'user', 
-            verification_code : temUsers.verificationCode,
+            role: 'user',
+            verification_code: tempUser.verificationCode,
             is_verified: true,
         });
-        delete tempUsers[email];
+
+        delete tempUsers[email]; // Remove the temp user after successful registration
         res.status(201).json({ message: 'User verified and registered successfully.' });
-    } catch(error){
+    } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to register user.' });
     }
 };
 
+
 const login = async (req , res) => {
-    const [ email, password ] = req.body;
+    const {email, password} = req.body;
     try {
         const user = await User.findOne({ where : {email}});
         if (!user){
@@ -80,3 +88,5 @@ const login = async (req , res) => {
         res.status(500).json({ error: 'Failed to log in.' });
     }
 };
+
+module.exports = {signup, verifyUser, login};
