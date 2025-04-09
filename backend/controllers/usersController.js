@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User} = require('../models');
+const {User, TutorCourse, Listing} = require('../models');
 const sendVerificationEmail = require('../mailer'); 
 
 const tempUsers = {};
@@ -66,7 +66,6 @@ const verifyUser = async (req, res) => {
     }
 };
 
-
 const login = async (req , res) => {
     const {email, password} = req.body;
     try {
@@ -81,12 +80,57 @@ const login = async (req , res) => {
         if (!validPassword) {
             return res.status(400).json({ error: 'Invalid email or password.' });
         }
-        const token = jwt.sign({ id : user.id , role : user.role} , 'mostafa' , {expiresIn : '1h'});
-        res.status(200).json({ message: 'Login successful.', token });
+        const token = jwt.sign({ id : user.id , role : user.role} , 'mostafa' , {expiresIn : '3h'});
+        res.status(200).json({ message: 'Login successful.', token, role: user.role });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to log in.' });
     }
 };
 
-module.exports = {signup, verifyUser, login};
+const getProfile = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            attributes: ['name', 'email', 'profile_picture', 'bio'],
+            include: [
+                { model: TutorCourse, attributes: ['course_name', 'description'],  as: 'tutor_courses' },
+                { model: Listing, attributes: ['title', 'price'], as: 'listings' }
+            ]
+        });
+
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        
+        // Return profile picture or set to null if not defined
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error fetching profile' });
+    }
+};
+
+
+const updateProfile = async (req, res) => {
+    const { name, bio } = req.body;
+    try {
+        await User.update({ name, bio }, { where: { id: req.user.id } });
+        res.json({ message: 'Profile updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update profile' });
+    }
+};
+
+const updateProfilePicture = async (req, res) => {
+    try {
+        const profilePicturePath = req.file ? `/uploads/${req.file.filename}` : null;
+        if (!profilePicturePath) return res.status(400).json({ error: 'No file uploaded' });
+
+        await User.update({ profile_picture: profilePicturePath }, { where: { id: req.user.id } });
+        res.json({ message: 'Profile picture updated successfully', profile_picture: profilePicturePath });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update profile picture' });
+    }
+};
+
+module.exports = {signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture};

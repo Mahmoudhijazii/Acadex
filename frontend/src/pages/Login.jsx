@@ -55,6 +55,7 @@ const Login = () => {
           password: formData.password
         });
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('role', response.data.role);
         setSuccess('Login Successfull');
         setTimeout(() => navigate('/'), 1000);
       }catch(err) {

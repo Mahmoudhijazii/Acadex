@@ -8,7 +8,7 @@ const SearchBar = () => {
     const [visible,setVisible] = useState(false);
     const location = useLocation();
     useEffect(() =>{
-        if (location.pathname.includes('collection')){
+        if (location.pathname.includes('collection') || location.pathname.includes('courses')){
             setVisible(true);
         }
         else{
@@ -23,13 +23,13 @@ const SearchBar = () => {
                     onChange={(e) => setSearch(e.target.value)} 
                     className='flex-1 outline-none bg-inherit text-sm ' 
                     type='text' 
-                    placeholder='Search' 
+                    placeholder={location.pathname.includes('courses') ? 'Search by course name or tutor name' : 'Search'} 
                 />
                 <img className='w-4' src={assets.search_icon} alt='Search Icon' />
             </div>
-            <img 
+            {/* <img 
                 onClick={() => setShowSearch(false)} className='inline w-3 cursor-pointer' src={assets.cross_icon} alt="Close Icon" 
-            />
+            /> */}
         </div>
     )  : null;
 }

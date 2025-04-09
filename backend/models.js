@@ -140,6 +140,10 @@ const Listing = sequelize.define('Listing',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   }, {
     tableName: 'listings',
   }
@@ -193,9 +197,11 @@ const ChatMessage = sequelize.define('ChatMessage',
   }
 );
 
-User.hasMany(TutorCourse, { foreignKey: 'user_id' });
-TutorCourse.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(TutorCourse, { foreignKey: 'user_id', as: 'tutor_courses' });
+TutorCourse.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
 
+User.hasMany(Listing, { foreignKey: 'user_id', as: 'listings' });
+Listing.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
 
 Dorm.hasMany(DormImage, { foreignKey: 'dorm_id' });
 DormImage.belongsTo(Dorm, { foreignKey: 'dorm_id' });

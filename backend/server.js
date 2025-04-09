@@ -2,6 +2,7 @@ const express = require('express');
 const { sequelize, User, TutorCourse, Dorm, DormImage, Listing, ListingImage, ChatMessage } = require('./models');
 const userRoutes = require('./routes/users');
 const coursesRoutes = require('./routes/courses');
+const adminRoutes = require('./routes/admins');
 const cors = require('cors');
 
 const app = express();
@@ -12,6 +13,10 @@ app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/courses', coursesRoutes );
+app.use('/api/admin', adminRoutes);
+app.use('/assets', express.static('assets'));
+app.use('/uploads', express.static('uploads'));
+
 
 // Start server
 const PORT = 3001; 

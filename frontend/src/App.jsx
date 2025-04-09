@@ -14,6 +14,7 @@ import Footer from './components/Footer'
 import SearchBar from './components/SearchBar'
 import Courses from './components/Courses'
 import Dorms from './components/Dorms'
+import Profile from './pages/Profile'
 const App = () => {
   return (
     // route container
@@ -28,6 +29,7 @@ const App = () => {
       <Route path='/product/:productId' element = {<Product/>} />
       <Route path='cart' element = {<Cart/>} />
       <Route path='/login' element = {<Login/>} />
+      <Route path='/profile' element = {<Profile/>} />
       <Route path='/place-order' element = {<PlaceOrder/>} />
       <Route path='order' element = {<Orders/>} />
       <Route path='/courses' element = {<Courses/>} />

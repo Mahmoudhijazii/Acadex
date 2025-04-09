@@ -1,45 +1,54 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import SearchBar from '../components/SearchBar';
+import { ShopContext } from '../context/ShopContext';
 
 const CoursesPage = () => {
-
   const [courses, setCourses] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [courseName, setCourseName] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const { search } = useContext(ShopContext);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      try{
-        const response =  await axios.get('http://localhost:3001/api/courses/posts');
+      try {
+        const response = await axios.get('http://localhost:3001/api/courses/posts');
         setCourses(response.data);
-      } catch(err){
+      } catch (err) {
         setError('Failed to fetch courses');
       }
-    }
+    };
+
+    const checkAdmin = () => {
+      const role = localStorage.getItem('role'); // Retrieve role from localStorage
+      setIsAdmin(role === 'admin'); // Set isAdmin based on role
+    };
+
     fetchCourses();
+    checkAdmin();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3001/api/courses/posts', 
+      const response = await axios.post(
+        'http://localhost:3001/api/courses/posts',
         { courseName, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
-      console.log('Response:', response.data); // Debugging log
-  
-      // Ensure user data is included
+
       const newCourse = {
         ...response.data,
-        User: response.data.User || { name: 'Unknown' }, // Fallback if User is missing
+        User: response.data.User || { name: 'Unknown' },
       };
-  
-      setCourses([...courses, newCourse]); // Update UI immediately
+
+      setCourses([...courses, newCourse]);
       setCourseName('');
       setDescription('');
       setSuccess('Course posted successfully!');
@@ -51,9 +60,25 @@ const CoursesPage = () => {
       setError('Failed to post course');
     }
   };
-  
 
-  if (error) return <p>{error}</p>;
+  const handleDelete = async (courseId) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`http://localhost:3001/api/admin/courses/${courseId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setCourses((prev) => prev.filter((course) => course.id !== courseId));
+    } catch (err) {
+      console.error('Failed to delete course:', err.response?.data || err.message);
+      alert('Failed to delete course');
+    }
+  };
+
+  const filteredCourses = courses.filter((course) =>
+    course.course_name?.toLowerCase().includes(search?.toLowerCase() || '') ||
+    course.users?.name?.toLowerCase().includes(search?.toLowerCase() || '')
+  );
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-8">
@@ -71,22 +96,32 @@ const CoursesPage = () => {
       {error && <p className="text-red-600">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course, index) => (
+        {filteredCourses.map((course, index) => (
           <div
             key={index}
             className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300"
           >
             <h2 className="text-xl font-semibold">{course.course_name}</h2>
             <p className="text-gray-600 mt-2">{course.description}</p>
-            <p className="text-gray-500 mt-2">Posted by: {course.User ? course.User.name : 'Unknown'}</p>
-            <button className="mt-4 bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg">
-              Contact Tutor
-            </button>
+            <p className="text-gray-500 mt-2">Posted by: {course.users ? course.users.name : 'Unknown'}</p>
+
+            <div className="flex gap-2 mt-4">
+              <button className="bg-black hover:bg-gray-800 transition-all duration-300 text-white py-2 px-4 rounded-lg">
+                Contact Tutor
+              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => handleDelete(course.id)}
+                  className="bg-red-600 hover:bg-red-700 transition-all duration-300 text-white py-2 px-4 rounded-lg"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">

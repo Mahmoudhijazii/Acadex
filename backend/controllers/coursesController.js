@@ -4,7 +4,7 @@ const {TutorCourse, User} = require('../models');
 const getPosts = async (req , res) => {
     try {
         const posts = await TutorCourse.findAll({
-            include : [{ model : User, attributes : ['name'] }],
+            include : [{ model : User, attributes : ['name'], as: 'users' }],
         });        
         res.status(201).json(posts);
     } catch (error){
@@ -32,6 +32,7 @@ const postCourse = async (req, res) => {
             include: {
               model: User,
               attributes: ['id', 'name'], 
+              as: 'users'
             },
           });
       
