@@ -19,7 +19,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await axios.get("http://localhost:3001/api/users/profile", {
+                const response = await axios.get("https://student-x.onrender.com/api/users/profile", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -39,7 +39,7 @@ const Profile = () => {
     const handleUpdateProfile = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put("http://localhost:3001/api/users/profile/update", 
+            await axios.put("https://student-x.onrender.com/api/users/profile/update", 
                 { name: newName, bio: newBio }, 
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -63,7 +63,7 @@ const Profile = () => {
     
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.put("http://localhost:3001/api/users/profile/update-profile", 
+            const response = await axios.put("https://student-x.onrender.com/api/users/profile/update-profile", 
                 formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
             );
     

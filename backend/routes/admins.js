@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { deleteCourse } = require('../controllers/adminController');
+const { deleteCourse, deleteListing, deleteDorm } = require('../controllers/adminController');
 const { authenticate } = require('../middleware/auth');
 const { User } = require('../models');
 
@@ -15,5 +15,7 @@ const isAdmin = async (req, res, next) => {
 
 // DELETE a course by id (admin only)
 router.delete('/courses/:id', authenticate, isAdmin, deleteCourse);
+router.delete('/listings/:id', authenticate, isAdmin, deleteListing);
+router.delete('/dorms/:id', authenticate, isAdmin, deleteDorm);
 
 module.exports = router;

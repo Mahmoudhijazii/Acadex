@@ -27,7 +27,7 @@ const Login = () => {
 
     if (showVerification){
       try{
-        const response = await axios.post('http://localhost:3001/api/users/verify', {
+        const response = await axios.post('https://student-x.onrender.com/api/users/verify', {
           email: formData.email,
           verificationCode
         });
@@ -42,7 +42,7 @@ const Login = () => {
 
     if (currentState === 'Sign Up'){
       try{
-        const response = await axios.post('http://localhost:3001/api/users/signup', formData);
+        const response = await axios.post('https://student-x.onrender.com/api/users/signup', formData);
         setSuccess(response.data.message);
         setShowVerification(true);
       }catch(err) {
@@ -50,7 +50,7 @@ const Login = () => {
       }
     } else {
       try{
-        const response = await axios.post('http://localhost:3001/api/users/login', {
+        const response = await axios.post('https://student-x.onrender.com/api/users/login', {
           email: formData.email,
           password: formData.password
         });

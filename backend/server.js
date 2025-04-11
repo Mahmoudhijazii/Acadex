@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const { sequelize, User, TutorCourse, Dorm, DormImage, Listing, ListingImage, ChatMessage } = require('./models');
 const userRoutes = require('./routes/users');
 const coursesRoutes = require('./routes/courses');
@@ -7,7 +8,13 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://your-frontend-url.com', // Replace with your actual frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  // credentials: true, // If you need to include credentials
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -19,7 +26,7 @@ app.use('/uploads', express.static('uploads'));
 
 
 // Start server
-const PORT = 3001; 
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

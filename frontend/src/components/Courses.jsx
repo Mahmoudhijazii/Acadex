@@ -17,7 +17,7 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/courses/posts');
+        const response = await axios.get('https://student-x.onrender.com/api/courses/posts');
         setCourses(response.data);
       } catch (err) {
         setError('Failed to fetch courses');
@@ -38,7 +38,7 @@ const CoursesPage = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:3001/api/courses/posts',
+        'https://student-x.onrender.com/api/courses/posts',
         { courseName, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -64,7 +64,7 @@ const CoursesPage = () => {
   const handleDelete = async (courseId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:3001/api/admin/courses/${courseId}`, {
+      await axios.delete(`https://student-x.onrender.com/api/admin/courses/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
