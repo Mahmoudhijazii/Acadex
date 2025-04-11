@@ -9,7 +9,7 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-  origin: 'https://your-frontend-url.com', // Replace with your actual frontend URL
+  origin: 'https://student-x.com', // Replace with your actual frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   // credentials: true, // If you need to include credentials
 };
