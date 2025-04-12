@@ -97,7 +97,7 @@ const Dorm = sequelize.define('Dorm',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    imageUrls: {
+    image_urls: {
       type: DataTypes.TEXT,  // Store the image URLs as a plain string (or comma-separated list)
       allowNull: true
     },
@@ -130,7 +130,7 @@ const Listing = sequelize.define('Listing',
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    imageUrls: {
+    image_urls: {
       type: DataTypes.TEXT,  // Store the image URLs as a plain string (or comma-separated list)
       allowNull: true
     },    

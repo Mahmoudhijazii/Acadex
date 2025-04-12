@@ -1,10 +1,10 @@
 import React from 'react'
 import {Routes,Route} from 'react-router-dom'
 import Home from './pages/Home'
-// import Collection from './pages/Collection'
+import Collection from './pages/Collection'
 import About from './pages/About'
 import Contact from './pages/Contact'
-// import Product from './pages/Product'
+import Product from './pages/Product'
 import Login from './pages/Login'
 import PlaceOrder from './pages/PlaceOrder'
 import Navbar from './components/Navbar'
@@ -15,8 +15,7 @@ import SearchBar from './components/SearchBar'
 import Courses from './components/Courses'
 import Dorms from './components/Dorms'
 import Profile from './pages/Profile'
-import ListingsPage from './pages/ListingsPage'
-import ItemDetailPage from './pages/ItemDetailPage'
+
 const App = () => {
   return (
     // route container
@@ -25,12 +24,12 @@ const App = () => {
       <SearchBar />
       <Routes>
       <Route path='/' element = {<Home/>} />
-      <Route exact path="/listings" element={<ListingsPage/>} />
-      <Route path="/listing/:id" element={<ItemDetailPage/>} />
-      {/* <Route path='/collection' element = {<Collection/>} /> */}
+      {/* <Route exact path="/listings" element={<ListingsPage/>} />
+      <Route path="/listing/:id" element={<ItemDetailPage/>} /> */}
+      <Route path='/collection' element = {<Collection/>} />
       <Route path='/about' element = {<About/>} />
       <Route path='/contact' element = {<Contact/>} />
-      {/* <Route path='/product/:productId' element = {<Product/>} /> */}
+      <Route path='/product/:id' element = {<Product/>} />
       <Route path='cart' element = {<Cart/>} />
       <Route path='/login' element = {<Login/>} />
       <Route path='/profile' element = {<Profile/>} />

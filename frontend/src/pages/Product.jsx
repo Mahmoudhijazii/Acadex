@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom'; // For fetching the id from the URL
 
-const ItemDetailPage = () => {
+const Product = () => {
   const { id } = useParams(); // Get the listing ID from the URL
   const [listing, setListing] = useState(null);
   const [error, setError] = useState(null);
@@ -51,4 +51,4 @@ const ItemDetailPage = () => {
   );
 };
 
-export default ItemDetailPage;
+export default Product;

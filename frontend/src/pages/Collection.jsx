@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Use `useNavigate` for navigat
 import axios from 'axios';
 import { ShopContext } from '../context/ShopContext';
 
-const ListingsPage = () => {
+const Collection = () => {
   const [listings, setListings] = useState([]);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -69,7 +69,7 @@ const ListingsPage = () => {
 
       {/* Button to open modal for posting a new listing */}
       <button 
-        className="bg-blue-500 text-white p-2 rounded-lg mb-6"
+        className="bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg"
         onClick={handleModalToggle}>
         Post New Listing
       </button>
@@ -148,4 +148,4 @@ const ListingsPage = () => {
   );
 };
 
-export default ListingsPage;
+export default Collection;
