@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use `useNavigate` for navigation
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ShopContext } from '../context/ShopContext';
 
 const Collection = () => {
   const [listings, setListings] = useState([]);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newListing, setNewListing] = useState({ title: '', price: '', description: '' });
-  const { search, userRole } = useContext(ShopContext); // Assuming user role is stored in context
-  const navigate = useNavigate(); // Use navigate hook
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const { search } = useContext(ShopContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -21,34 +24,53 @@ const Collection = () => {
       }
     };
 
+    const checkAdmin = () => {
+      const role = localStorage.getItem('role');
+      setIsAdmin(role === 'admin');
+    };
+
     fetchListings();
+    checkAdmin();
   }, []);
 
   const handleCardClick = (id) => {
-    // Navigate to the item details page when the card is clicked
-    navigate(`/listing/${id}`);
+    navigate(`/listing/${id}`); // fixed template string
   };
 
   const handleDelete = async (id) => {
+    const token = localStorage.getItem('token');
     try {
-      await axios.delete(`https://student-x.onrender.com/api/listings/${id}`);
-      setListings(listings.filter(listing => listing.id !== id));
+      await axios.delete(`https://student-x.onrender.com/api/listings/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setListings((prev) => prev.filter((listing) => listing.id !== id));
     } catch (err) {
       setError('Failed to delete listing');
     }
   };
 
-  const handleModalToggle = () => {
-    setShowModal(!showModal);
-  };
-
-  const handleCreateListing = async () => {
+  const handleCreateListing = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
     try {
-      const response = await axios.post('https://student-x.onrender.com/api/listings/listings', newListing);
-      setListings([...listings, response.data]);
-      setShowModal(false); // Close the modal
-      setNewListing({ title: '', price: '', description: '' }); // Reset form
+      const response = await axios.post(
+        'https://student-x.onrender.com/api/listings/listings',
+        newListing,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const newPost = {
+        ...response.data,
+        users: response.data.users || { name: 'Unknown' },
+      };
+
+      setListings([...listings, newPost]);
+      setShowModal(false);
+      setNewListing({ title: '', price: '', description: '' });
+      setSuccess('Item posted successfully!');
+      setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
+      console.error(err);
       setError('Failed to create listing');
     }
   };
@@ -64,83 +86,97 @@ const Collection = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-8">
-      <h1 className="text-3xl font-bold mb-6">Available Listings</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Student-X Listings</h1>
+        <button
+          className="bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg"
+          onClick={() => setShowModal(true)}
+        >
+          Add an Item
+        </button>
+      </div>
+
+      {success && <p className="text-green-600">{success}</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {/* Button to open modal for posting a new listing */}
-      <button 
-        className="bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg"
-        onClick={handleModalToggle}>
-        Post New Listing
-      </button>
-
-      {/* Listings Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredListings.map((listing, index) => (
           <div
             key={index}
             className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
-            onClick={() => handleCardClick(listing.id)} // Navigate to item detail page
+            onClick={() => handleCardClick(listing.id)}
           >
             <h2 className="text-xl font-semibold">{listing.title}</h2>
             <p className="text-gray-600 mt-2">${listing.price}</p>
+            <p className="text-gray-500 mt-2">Seller: {listing.users?.name || 'Unknown'}</p>
 
-            {/* Contact Seller Button */}
-            <button className="bg-green-500 text-white p-2 rounded-lg mt-4">Contact Seller</button>
-
-            {/* Delete Button (only for admin users) */}
-            {userRole === 'admin' && (
-              <button
-                className="bg-red-500 text-white p-2 rounded-lg mt-4"
-                onClick={(e) => { e.stopPropagation(); handleDelete(listing.id); }}
-              >
-                Delete Listing
+            <div className="flex gap-2 mt-4">
+              <button className="bg-black hover:bg-gray-800 text-white py-2 px-4 rounded-lg">
+                Contact Seller
               </button>
-            )}
+              {isAdmin && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click
+                    handleDelete(listing.id);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Modal for Posting a New Listing */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-96">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-2xl font-semibold mb-4">Post a New Listing</h2>
-            <input
-              type="text"
-              name="title"
-              value={newListing.title}
-              onChange={handleInputChange}
-              placeholder="Title"
-              className="w-full p-2 mb-4 border rounded"
-            />
-            <input
-              type="number"
-              name="price"
-              value={newListing.price}
-              onChange={handleInputChange}
-              placeholder="Price"
-              className="w-full p-2 mb-4 border rounded"
-            />
-            <textarea
-              name="description"
-              value={newListing.description}
-              onChange={handleInputChange}
-              placeholder="Description"
-              className="w-full p-2 mb-4 border rounded"
-            />
-            <button
-              className="bg-blue-500 text-white p-2 rounded-lg w-full"
-              onClick={handleCreateListing}
-            >
-              Create Listing
-            </button>
-            <button
-              className="bg-gray-500 text-white p-2 rounded-lg w-full mt-4"
-              onClick={handleModalToggle}
-            >
-              Close
-            </button>
+            <form onSubmit={handleCreateListing}>
+              <input
+                type="text"
+                name="title"
+                value={newListing.title}
+                onChange={handleInputChange}
+                placeholder="Title"
+                className="w-full p-2 mb-4 border rounded"
+                required
+              />
+              <input
+                type="number"
+                name="price"
+                value={newListing.price}
+                onChange={handleInputChange}
+                placeholder="Price"
+                className="w-full p-2 mb-4 border rounded"
+                required
+              />
+              <textarea
+                name="description"
+                value={newListing.description}
+                onChange={handleInputChange}
+                placeholder="Description"
+                className="w-full p-2 mb-4 border rounded"
+                required
+              />
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="mr-2 px-4 py-2 bg-gray-300 rounded"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+                >
+                  Post
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
