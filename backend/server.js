@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+const path = require('path');
 const { sequelize, User, TutorCourse, Dorm, DormImage, Listing, ListingImage, ChatMessage } = require('./models');
 const userRoutes = require('./routes/users');
 const coursesRoutes = require('./routes/courses');
