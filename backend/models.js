@@ -97,30 +97,16 @@ const Dorm = sequelize.define('Dorm',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
+    imageUrls: {
+      type: DataTypes.TEXT,  // Store the image URLs as a plain string (or comma-separated list)
+      allowNull: true
+    },
   }, {
-    tableName: 'dorms',
+    timestamps: true,
+    tableName: 'dorms'
   }
 );
 
-const DormImage = sequelize.define('DormImage',
- {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    dorm_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false, 
-    },
-    image_url: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-  }, {
-    tableName: 'dorm_images',
-  }
-);
 
 const Listing = sequelize.define('Listing', 
   {
@@ -144,58 +130,16 @@ const Listing = sequelize.define('Listing',
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    imageUrls: {
+      type: DataTypes.TEXT,  // Store the image URLs as a plain string (or comma-separated list)
+      allowNull: true
+    },    
   }, {
-    tableName: 'listings',
+    timestamps: true,
+    tableName: 'listings'
   }
 );
 
-const ListingImage = sequelize.define('ListingImage', 
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    listing_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false, 
-    },
-    image_url: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-  }, {
-    tableName: 'listing_images',
-  }
-);
-
-const ChatMessage = sequelize.define('ChatMessage', 
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    sender_id: { 
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    receiver_id: { 
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    message: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    timestamp: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-    },
-  }, {
-    tableName: 'chat_messages',
-  }
-);
 
 User.hasMany(TutorCourse, { foreignKey: 'user_id', as: 'tutor_courses' });
 TutorCourse.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
@@ -203,13 +147,4 @@ TutorCourse.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
 User.hasMany(Listing, { foreignKey: 'user_id', as: 'listings' });
 Listing.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
 
-Dorm.hasMany(DormImage, { foreignKey: 'dorm_id' });
-DormImage.belongsTo(Dorm, { foreignKey: 'dorm_id' });
-
-Listing.hasMany(ListingImage, { foreignKey: 'listing_id' });
-ListingImage.belongsTo(Listing, { foreignKey: 'listing_id' });
-
-ChatMessage.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
-ChatMessage.belongsTo(User, { foreignKey: 'receiver_id', as: 'receiver' });
-
-module.exports = { sequelize, User, TutorCourse, Dorm, DormImage, Listing, ListingImage, ChatMessage };
+module.exports = { sequelize, User, TutorCourse, Dorm, Listing };
