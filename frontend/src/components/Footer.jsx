@@ -16,7 +16,6 @@ const Footer = () => {
                 <ul className='flex flex-col gap-1 text-gray-600'>
                     <li>Home</li>
                     <li>Collection</li>
-                    <li>Dorms</li>
                     <li>Courses</li>
                     <li>Dorms</li>
                     <li>About us</li>
@@ -26,8 +25,10 @@ const Footer = () => {
                 <p className='text-xl font-medium mb-5 mt-4'>GET IN TOUCH</p>
                 <ul className='flex flex-col gap-1 text-gray-600'>
 
-                    <li>+ 03123123</li>
-                    <li>Student-X@gmail.com</li>
+                    <li>+961 76 440 508</li>
+                    <li>
+                        <a href='mailto:info@student-x.com'>info@student-x.com</a>
+                    </li>
 
                 </ul>
             </div>
@@ -35,7 +36,7 @@ const Footer = () => {
         <div>
             <hr />
             <p className='py-5 text-sm text-center'>
-                Copyright 2024@ Student-X.com - All Right Reserved.
+                Copyright 2025@ Student-X.com - All Right Reserved.
             </p>
         </div>
     </div>

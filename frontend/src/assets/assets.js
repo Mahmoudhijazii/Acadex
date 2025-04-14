@@ -1,58 +1,58 @@
-import p_img1 from './labglasses.png'
-import p_img2_1 from './Diagnostic-Set.png'
-import p_img2_2 from './engineeringkit1.png'
-import p_img2_3 from './engineeringkit2.png'
-import p_img2_4 from './engineeringkit3.png'
-import p_img3 from './Anatomical_Model.png'
-import p_img4 from './draftingtable.png'
-import p_img5 from './laptop1.png'
-import p_img6 from './drawingtablet.png'
-import p_img7 from './labcoat.png'
-import p_img8 from './lasermeasuring.png'
-import p_img9 from './nursesscrub.png'
-import p_img10 from './casiocalc.png'
-import p_img11 from './p_img11.png'
-import p_img12 from './p_img12.png'
-import p_img13 from './p_img13.png'
-import p_img14 from './p_img14.png'
-import p_img15 from './p_img15.png'
-import p_img16 from './p_img16.png'
-import p_img17 from './p_img17.png'
-import p_img18 from './p_img18.png'
-import p_img19 from './p_img19.png'
-import p_img20 from './p_img20.png'
-import p_img21 from './p_img21.png'
-import p_img22 from './p_img22.png'
-import p_img23 from './p_img23.png'
-import p_img24 from './p_img24.png'
-import p_img25 from './p_img25.png'
-import p_img26 from './p_img26.png'
-import p_img27 from './p_img27.png'
-import p_img28 from './p_img28.png'
-import p_img29 from './p_img29.png'
-import p_img30 from './p_img30.png'
-import p_img31 from './p_img31.png'
-import p_img32 from './p_img32.png'
-import p_img33 from './p_img33.png'
-import p_img34 from './p_img34.png'
-import p_img35 from './p_img35.png'
-import p_img36 from './p_img36.png'
-import p_img37 from './p_img37.png'
-import p_img38 from './p_img38.png'
-import p_img39 from './p_img39.png'
-import p_img40 from './p_img40.png'
-import p_img41 from './p_img41.png'
-import p_img42 from './p_img42.png'
-import p_img43 from './p_img43.png'
-import p_img44 from './p_img44.png'
-import p_img45 from './p_img45.png'
-import p_img46 from './p_img46.png'
-import p_img47 from './p_img47.png'
-import p_img48 from './p_img48.png'
-import p_img49 from './p_img49.png'
-import p_img50 from './p_img50.png'
-import p_img51 from './p_img51.png'
-import p_img52 from './p_img52.png'
+// import p_img1 from './labglasses.png'
+// import p_img2_1 from './Diagnostic-Set.png'
+// import p_img2_2 from './engineeringkit1.png'
+// import p_img2_3 from './engineeringkit2.png'
+// import p_img2_4 from './engineeringkit3.png'
+// import p_img3 from './Anatomical_Model.png'
+// import p_img4 from './draftingtable.png'
+// import p_img5 from './laptop1.png'
+// import p_img6 from './drawingtablet.png'
+// import p_img7 from './labcoat.png'
+// import p_img8 from './lasermeasuring.png'
+// import p_img9 from './nursesscrub.png'
+// import p_img10 from './casiocalc.png'
+// import p_img11 from './p_img11.png'
+// import p_img12 from './p_img12.png'
+// import p_img13 from './p_img13.png'
+// import p_img14 from './p_img14.png'
+// import p_img15 from './p_img15.png'
+// import p_img16 from './p_img16.png'
+// import p_img17 from './p_img17.png'
+// import p_img18 from './p_img18.png'
+// import p_img19 from './p_img19.png'
+// import p_img20 from './p_img20.png'
+// import p_img21 from './p_img21.png'
+// import p_img22 from './p_img22.png'
+// import p_img23 from './p_img23.png'
+// import p_img24 from './p_img24.png'
+// import p_img25 from './p_img25.png'
+// import p_img26 from './p_img26.png'
+// import p_img27 from './p_img27.png'
+// import p_img28 from './p_img28.png'
+// import p_img29 from './p_img29.png'
+// import p_img30 from './p_img30.png'
+// import p_img31 from './p_img31.png'
+// import p_img32 from './p_img32.png'
+// import p_img33 from './p_img33.png'
+// import p_img34 from './p_img34.png'
+// import p_img35 from './p_img35.png'
+// import p_img36 from './p_img36.png'
+// import p_img37 from './p_img37.png'
+// import p_img38 from './p_img38.png'
+// import p_img39 from './p_img39.png'
+// import p_img40 from './p_img40.png'
+// import p_img41 from './p_img41.png'
+// import p_img42 from './p_img42.png'
+// import p_img43 from './p_img43.png'
+// import p_img44 from './p_img44.png'
+// import p_img45 from './p_img45.png'
+// import p_img46 from './p_img46.png'
+// import p_img47 from './p_img47.png'
+// import p_img48 from './p_img48.png'
+// import p_img49 from './p_img49.png'
+// import p_img50 from './p_img50.png'
+// import p_img51 from './p_img51.png'
+// import p_img52 from './p_img52.png'
 
 
 
@@ -69,8 +69,9 @@ import star_dull_icon from './star_dull_icon.png'
 import star_icon from './star_icon.png'
 import support_img from './support_img.png'
 import menu_icon from './menu_icon.png'
-import about_img from './about_img.png'
-import contact_img from './contact_img.png'
+import defaultPic from "./default-profile.png"
+// import about_img from './about_img.png'
+// import contact_img from './contact_img.png'
 import razorpay_logo from './razorpay_logo.png'
 import stripe_logo from './stripe_logo.png'
 import cross_icon from './cross_icon.png'
@@ -89,134 +90,135 @@ export const assets = {
     bin_icon,
     support_img,
     menu_icon,
-    about_img,
-    contact_img,
+    // about_img,
+    // contact_img,
     razorpay_logo,
     stripe_logo,
+    defaultPic,
     cross_icon
 }
 
 export const products = [
-    {
-        _id: "aaaaa",
-        name: "Classic Safety Glasses",
-        description: "Lightweight, durable eyewear designed with clear, impact-resistant lenses and a comfortable fit, offering reliable eye protection during lab experiments or industrial tasks.",
-        price: 150,
-        image: [p_img1],
-        category: "HealthSciences",
-        subCategory: "Lab",
-        sizes: ["S", "M", "L"],
-        date: 1716634345448,
-        bestseller: true
-    },
-    {
-        _id: "aaaab",
-        name: "Diagnostic-Set",
-        description: "Compact, portable diagnostic set featuring durable instruments and high-precision tools, perfect for thorough physical examinations and medical assessments.",
-        price: 200,
-        image: [p_img2_1,p_img2_2,p_img2_3,p_img2_4],
-        category: "HealthSciences",
-        subCategory: "Lab",
-        sizes: ["M", "L", "XL"],
-        date: 1716621345448,
-        bestseller: true
-    },
-    {
-        _id: "aaaac",
-        name: "Anatomical Model",
-        description: "Detailed, anatomically accurate model crafted from sturdy materials, ideal for educational purposes and hands-on learning in medical studies.",
-        price: 220,
-        image: [p_img3],
-        category: "HealthSciences",
-        subCategory: "Topwear",
-        sizes: ["S", "L", "XL"],
-        date: 1716234545448,
-        bestseller: true
-    },
-    {
-        _id: "aaaad",
-        name: "Drafting Table",
-        description: "Adjustable, spacious drafting table with a sturdy surface and ergonomic design, perfect for precision drawing and architectural projects.",
-        price: 110,
-        image: [p_img4],
-        category: "Arts & Sciences",
-        subCategory: "Topwear",
-        sizes: ["S", "M", "XXL"],
-        date: 1716621345448,
-        bestseller: true
-    },
-    {
-        _id: "aaaae",
-        name: "Lenovo Laptop",
-        description: "Sleek, lightweight Mac laptop with a powerful processor and crystal-clear display, designed to handle intense academic workloads and creative tasks effortlessly.",
-        price: 130,
-        image: [p_img5],
-        category: "Engineering",
-        subCategory: "Topwear",
-        sizes: ["M", "L", "XL"],
-        date: 1716622345448,
-        bestseller: true
-    },
-    {
-        _id: "aaaaf",
-        name: "Drawing Tablet",
-        description: "High-resolution drawing tablet with responsive stylus and customizable settings, offering a seamless digital art experience for design and illustration projects.",
-        price: 140,
-        image: [p_img6],
-        category: "Kids",
-        subCategory: "Topwear",
-        sizes: ["S", "L", "XL"],
-        date: 1716623423448,
-        bestseller: true
-    },
-    {
-        _id: "aaaag",
-        name: "Lab Coat",
-        description: "Durable, easy-care lab coat with multiple pockets and a comfortable fit, providing professional protection and practicality for lab work and clinical duties.",
-        price: 190,
-        image: [p_img7],
-        category: "HealthSciences",
-        subCategory: "Bottomwear",
-        sizes: ["S", "L", "XL"],
-        date: 1716621542448,
-        bestseller: false
-    },
-    {
-        _id: "aaaah",
-        name: "Laser Measuring Tool",
-        description: "Accurate, easy-to-use laser measuring tool with compact design and precise readings, perfect for quick measurements and construction projects.",
-        price: 140,
-        image: [p_img8],
-        category: "Engineering",
-        subCategory: "Computer Engineering",
-        sizes: ["S", "M", "L", "XL"],
-        date: 1716622345448,
-        bestseller: false
-    },
-    {
-        _id: "aaaai",
-        name: "Nurse’s Scrub",
-        description: "Comfortable, breathable nurse’s scrub set with a professional appearance and functional pockets, ideal for long shifts and dynamic healthcare environments.",
-        price: 100,
-        image: [p_img9],
-        category: "HealthSciences",
-        subCategory: "Nurse",
-        sizes: ["M", "L", "XL"],
-        date: 1716621235448,
-        bestseller: false
-    },
-    {
-        _id: "aaaaj",
-        name: "Casio Calculator",
-        description: "Reliable, user-friendly Casio calculator with a clear display and essential functions, suitable for complex calculations in academic studies and exams.",
-        price: 20,
-        image: [p_img10],
-        category: "Men",
-        subCategory: "Bottomwear",
-        sizes: ["S", "L", "XL"],
-        date: 1716622235448,
-        bestseller: false
-    }
+    // {
+    //     _id: "aaaaa",
+    //     name: "Classic Safety Glasses",
+    //     description: "Lightweight, durable eyewear designed with clear, impact-resistant lenses and a comfortable fit, offering reliable eye protection during lab experiments or industrial tasks.",
+    //     price: 150,
+    //     image: [p_img1],
+    //     category: "HealthSciences",
+    //     subCategory: "Lab",
+    //     sizes: ["S", "M", "L"],
+    //     date: 1716634345448,
+    //     bestseller: true
+    // },
+    // {
+    //     _id: "aaaab",
+    //     name: "Diagnostic-Set",
+    //     description: "Compact, portable diagnostic set featuring durable instruments and high-precision tools, perfect for thorough physical examinations and medical assessments.",
+    //     price: 200,
+    //     image: [p_img2_1,p_img2_2,p_img2_3,p_img2_4],
+    //     category: "HealthSciences",
+    //     subCategory: "Lab",
+    //     sizes: ["M", "L", "XL"],
+    //     date: 1716621345448,
+    //     bestseller: true
+    // },
+    // {
+    //     _id: "aaaac",
+    //     name: "Anatomical Model",
+    //     description: "Detailed, anatomically accurate model crafted from sturdy materials, ideal for educational purposes and hands-on learning in medical studies.",
+    //     price: 220,
+    //     image: [p_img3],
+    //     category: "HealthSciences",
+    //     subCategory: "Topwear",
+    //     sizes: ["S", "L", "XL"],
+    //     date: 1716234545448,
+    //     bestseller: true
+    // },
+    // {
+    //     _id: "aaaad",
+    //     name: "Drafting Table",
+    //     description: "Adjustable, spacious drafting table with a sturdy surface and ergonomic design, perfect for precision drawing and architectural projects.",
+    //     price: 110,
+    //     image: [p_img4],
+    //     category: "Arts & Sciences",
+    //     subCategory: "Topwear",
+    //     sizes: ["S", "M", "XXL"],
+    //     date: 1716621345448,
+    //     bestseller: true
+    // },
+    // {
+    //     _id: "aaaae",
+    //     name: "Lenovo Laptop",
+    //     description: "Sleek, lightweight Mac laptop with a powerful processor and crystal-clear display, designed to handle intense academic workloads and creative tasks effortlessly.",
+    //     price: 130,
+    //     image: [p_img5],
+    //     category: "Engineering",
+    //     subCategory: "Topwear",
+    //     sizes: ["M", "L", "XL"],
+    //     date: 1716622345448,
+    //     bestseller: true
+    // },
+    // {
+    //     _id: "aaaaf",
+    //     name: "Drawing Tablet",
+    //     description: "High-resolution drawing tablet with responsive stylus and customizable settings, offering a seamless digital art experience for design and illustration projects.",
+    //     price: 140,
+    //     image: [p_img6],
+    //     category: "Kids",
+    //     subCategory: "Topwear",
+    //     sizes: ["S", "L", "XL"],
+    //     date: 1716623423448,
+    //     bestseller: true
+    // },
+    // {
+    //     _id: "aaaag",
+    //     name: "Lab Coat",
+    //     description: "Durable, easy-care lab coat with multiple pockets and a comfortable fit, providing professional protection and practicality for lab work and clinical duties.",
+    //     price: 190,
+    //     image: [p_img7],
+    //     category: "HealthSciences",
+    //     subCategory: "Bottomwear",
+    //     sizes: ["S", "L", "XL"],
+    //     date: 1716621542448,
+    //     bestseller: false
+    // },
+    // {
+    //     _id: "aaaah",
+    //     name: "Laser Measuring Tool",
+    //     description: "Accurate, easy-to-use laser measuring tool with compact design and precise readings, perfect for quick measurements and construction projects.",
+    //     price: 140,
+    //     image: [p_img8],
+    //     category: "Engineering",
+    //     subCategory: "Computer Engineering",
+    //     sizes: ["S", "M", "L", "XL"],
+    //     date: 1716622345448,
+    //     bestseller: false
+    // },
+    // {
+    //     _id: "aaaai",
+    //     name: "Nurse’s Scrub",
+    //     description: "Comfortable, breathable nurse’s scrub set with a professional appearance and functional pockets, ideal for long shifts and dynamic healthcare environments.",
+    //     price: 100,
+    //     image: [p_img9],
+    //     category: "HealthSciences",
+    //     subCategory: "Nurse",
+    //     sizes: ["M", "L", "XL"],
+    //     date: 1716621235448,
+    //     bestseller: false
+    // },
+    // {
+    //     _id: "aaaaj",
+    //     name: "Casio Calculator",
+    //     description: "Reliable, user-friendly Casio calculator with a clear display and essential functions, suitable for complex calculations in academic studies and exams.",
+    //     price: 20,
+    //     image: [p_img10],
+    //     category: "Men",
+    //     subCategory: "Bottomwear",
+    //     sizes: ["S", "L", "XL"],
+    //     date: 1716622235448,
+    //     bestseller: false
+    // }
     // {
     //     _id: "aaaak",
     //     name: "Men Round Neck Pure Cotton T-shirt",

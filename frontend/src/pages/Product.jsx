@@ -10,7 +10,7 @@ const Product = () => {
   useEffect(() => {
     const fetchListingDetails = async () => {
       try {
-        const response = await axios.get(`https://student-x.onrender.com/api/listings/listings/${id}`);
+        const response = await axios.get(`https://student-x.onrender.com/api/listings/${id}`);
         setListing(response.data);
       } catch (err) {
         setError('Failed to fetch item details');

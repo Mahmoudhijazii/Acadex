@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { assets } from '../assets/assets';
 import axios from "axios";
 
 const Profile = () => {
@@ -83,7 +84,7 @@ const Profile = () => {
                 <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
                     <div className="flex flex-col items-center">
                         <img 
-                             src={user.profile_picture || "assets/default-profile.png"}
+                            src= {assets.defaultPic}
                             alt="Profile" 
                             className="w-32 h-32 rounded-full shadow-lg mb-4"
                         />
