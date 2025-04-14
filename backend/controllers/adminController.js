@@ -31,6 +31,8 @@ const deleteListing = async (req , res) => {
     }
 }
 
+
+
 const deleteDorm = async (req , res) => {
     const{id} = req.params;
     try{
@@ -42,8 +44,36 @@ const deleteDorm = async (req , res) => {
         res.json({ message: 'Item deleted successfully.' });
     }catch{
         console.error('Error deleting dorm:', error.message);
-        res.status(500).json({ error: 'Failed to delete dorm.' });
+        res.status(500).json({ error: 'Failed to delete dorm.'});
     }
 }
 
-module.exports =  {deleteCourse, deleteListing, deleteDorm} ;
+const postDorm = async (req, res) => {
+    try {
+      const { title, description, location, price } = req.body;
+  
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Only admins can add dorms.' });
+      }
+  
+      if (!title || !description || !location || !price) {
+        return res.status(400).json({ error: 'All fields are required.' });
+      }
+  
+      const newDorm = await Dorm.create({
+        title,
+        description,
+        location,
+        price,
+      });
+      
+  
+      res.status(201).json(newDorm);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to create dorm.' });
+    }
+  };
+
+
+module.exports =  {deleteCourse, deleteListing, deleteDorm, postDorm} ;

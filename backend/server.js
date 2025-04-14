@@ -6,6 +6,7 @@ const userRoutes = require('./routes/users');
 const coursesRoutes = require('./routes/courses');
 const listingRoutes = require('./routes/listings');
 const adminRoutes = require('./routes/admins');
+const dormRoutes = require('./routes/dorms');
 const cors = require('cors');
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/courses', coursesRoutes );
 app.use('/api/listings', listingRoutes );
 app.use('/api/admin', adminRoutes);
+app.use('/api/dorms',dormRoutes)
 app.use('/assets', express.static('assets'));
 app.use('/uploads', express.static('uploads'));
 
