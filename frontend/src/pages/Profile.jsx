@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { assets } from '../assets/assets';
 import axios from "axios";
+import supabase from "../supabaseClient";
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -59,18 +60,39 @@ const Profile = () => {
         const file = event.target.files[0];
         if (!file) return;
     
-        const formData = new FormData();
-        formData.append("profile_picture", file);
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `profile-pictures/${fileName}`;
     
         try {
+            // Step 1: Upload image to Supabase Storage
+            const { data, error } = await supabase.storage
+                .from('your-bucket-name') // 👈 replace with your Supabase bucket name
+                .upload(filePath, file);
+    
+            if (error) throw error;
+    
+            // Step 2: Get the public URL
+            const { data: publicUrlData } = supabase
+                .storage
+                .from('your-bucket-name')
+                .getPublicUrl(filePath);
+    
+            const publicUrl = publicUrlData.publicUrl;
+    
+            // Step 3: Send to your backend to update user profile picture
             const token = localStorage.getItem("token");
-            const response = await axios.put("https://student-x.onrender.com/api/users/profile/update-profile", 
-                formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
+    
+            await axios.put("https://student-x.onrender.com/api/users/profile/picture",
+                { profile_picture: publicUrl },
+                { headers: { Authorization: `Bearer ${token}` } }
             );
     
-            setUser((prevUser) => ({ ...prevUser, profile_picture: response.data.profile_picture }));
-        } catch (error) {
-            console.error("Error uploading profile picture:", error);
+            // Step 4: Update frontend state
+            setUser((prevUser) => ({ ...prevUser, profile_picture: publicUrl }));
+    
+        } catch (err) {
+            console.error("Upload error:", err.message);
             setError("Failed to upload profile picture.");
         }
     };
@@ -84,7 +106,7 @@ const Profile = () => {
                 <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
                     <div className="flex flex-col items-center">
                         <img 
-                            src= {assets.defaultPic}
+                            src= {user?.profile_picture || assets.defaultPic}
                             alt="Profile" 
                             className="w-32 h-32 rounded-full shadow-lg mb-4"
                         />

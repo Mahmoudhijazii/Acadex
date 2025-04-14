@@ -22,7 +22,7 @@ const Dorm = () => {
   useEffect(() => {
     const fetchDorms = async () => {
       try {
-        const dorm = await axios.get('http://localhost:3001/api/dorms/posts');
+        const dorm = await axios.get('https://student-x.onrender.com/api/dorms/posts');
         setDorm(dorm.data);
       } catch (err) {
         console.error(err);
@@ -45,7 +45,7 @@ const Dorm = () => {
   const handleDelete = async (dormId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:3001/api/admin/dorms/delete/${dormId}`, {
+      await axios.delete(`https://student-x.onrender.com/api/admin/dorms/delete/${dormId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -63,7 +63,7 @@ const Dorm = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:3001/api/admin/dorms/add',
+        'https://student-x.onrender.com/api/admin/dorms/add',
         { title, description, location, price },
         { headers: { Authorization: `Bearer ${token}` } }
       );

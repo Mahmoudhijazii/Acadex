@@ -15,6 +15,7 @@ import SearchBar from './components/SearchBar'
 import Courses from './components/Courses'
 import Dorms from './components/Dorms'
 import Profile from './pages/Profile'
+import DormInfo from './components/DormInfo'
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
       <Route path='order' element = {<Orders/>} />
       <Route path='/courses' element = {<Courses/>} />
       <Route path='/dorms' element = {<Dorms/>} />
+      <Route path='/dorms/:id' element = {<DormInfo/>} />
 
       </Routes>
       <Footer/>

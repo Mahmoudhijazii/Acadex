@@ -17,6 +17,6 @@ router.post('/login', login);
 
 router.get('/profile', authenticate, getProfile); // Get user profile
 router.put('/profile/update', authenticate, updateProfile); // Update name & bio
-router.put('/profile/picture', authenticate, multerUpload.single("profile_picture"), updateProfilePicture);
+router.put('/profile/picture', authenticate, updateProfilePicture);
 
 module.exports = router;

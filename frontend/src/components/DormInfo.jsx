@@ -12,7 +12,7 @@ const DormInfo = () => {
   useEffect(() => {
     const fetchDorm = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/api/dorms/${id}`);
+        const response = await axios.get(`https://student-x.onrender.com/api/dorms/${id}`);
         setDorm(response.data);
       } catch (err) {
         setError("Failed to load dorm details.");

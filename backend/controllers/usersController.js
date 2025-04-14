@@ -122,14 +122,18 @@ const updateProfile = async (req, res) => {
 
 const updateProfilePicture = async (req, res) => {
     try {
-        const profilePicturePath = req.file ? `/uploads/${req.file.filename}` : null;
-        if (!profilePicturePath) return res.status(400).json({ error: 'No file uploaded' });
+        const userId = req.user.id;
+        const { profile_picture } = req.body;
 
-        await User.update({ profile_picture: profilePicturePath }, { where: { id: req.user.id } });
-        res.json({ message: 'Profile picture updated successfully', profile_picture: profilePicturePath });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to update profile picture' });
+        await User.update(
+            { profile_pic: profile_picture },
+            { where: { id: userId } }
+        );
+
+        res.status(200).json({ message: "Profile picture updated", profile_picture });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error updating profile picture" });
     }
 };
 
