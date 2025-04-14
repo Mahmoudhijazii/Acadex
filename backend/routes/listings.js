@@ -5,7 +5,7 @@ const { authenticate } = require('../middleware/auth');
 
 router.get("/listings", getListings);
 router.post("/listings", authenticate, postItem);
-router.get("/:id",authenticate,  getListingById);
+router.get("/:id",  getListingById);
 
 
 module.exports = router; 
