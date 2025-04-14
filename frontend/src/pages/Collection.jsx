@@ -34,13 +34,13 @@ const Collection = () => {
   }, []);
 
   const handleCardClick = (id) => {
-    navigate(`/listing/${id}`); // fixed template string
+    navigate(`/product/${id}`); // fixed template string
   };
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`https://student-x.onrender.com/api/listings/${id}`, {
+      await axios.delete(`https://student-x.onrender.com/api/admin/listings/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setListings((prev) => prev.filter((listing) => listing.id !== id));

@@ -44,4 +44,23 @@ const postItem = async (req , res) => {
     }
 };
 
-module.exports = { getListings, postItem };
+const getListingById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const listing = await Listing.findByPk(id,{
+            include: [{ model: User, attributes: ['name'], as: 'users' }],
+        });
+
+        if (!listing) {
+            return res.status(404).json({ error: 'Listing not found.' });
+        }
+
+        res.status(200).json(listing);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch listing.' });
+    }
+};
+
+
+module.exports = { getListings, postItem , getListingById};
