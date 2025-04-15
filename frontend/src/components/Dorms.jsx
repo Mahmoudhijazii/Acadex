@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import DormCard from '../components/DormCard';
-import { supabase } from '../supabaseClient'; // Make sure this exists
+import supabase from "../supabaseClient";
 
 const Dorm = () => {
   const navigate = useNavigate();
@@ -141,7 +141,7 @@ const Dorm = () => {
         {dorm.map((dormItem, index) => (
           <DormCard
             key={index}
-            image={dormItem.image_urls?.[0] || 'fallback.jpg'}
+            image={dormItem.image_urls?.[0]}
             title={dormItem.title}
             location={dormItem.location}
             price={dormItem.price}

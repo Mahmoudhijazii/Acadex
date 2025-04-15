@@ -50,7 +50,7 @@ const deleteDorm = async (req , res) => {
 
 const postDorm = async (req, res) => {
     try {
-      const { title, description, location, price, image } = req.body;
+      const { title, description, location, price, image_urls } = req.body;
   
       if (req.user.role !== 'admin') {
         return res.status(403).json({ error: 'Only admins can add dorms.' });

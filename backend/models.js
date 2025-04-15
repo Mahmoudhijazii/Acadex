@@ -98,9 +98,16 @@ const Dorm = sequelize.define('Dorm',
       allowNull: false,
     },
     image_urls: {
-      type: DataTypes.TEXT,  // Store the image URLs as a plain string (or comma-separated list)
-      allowNull: true
-    },
+      type: DataTypes.TEXT,
+      allowNull: true,
+      get() {
+        const rawValue = this.getDataValue('image_urls');
+        return rawValue ? JSON.parse(rawValue) : [];
+      },
+      set(value) {
+        this.setDataValue('image_urls', JSON.stringify(value));
+      }
+    }    
   }, {
     timestamps: true,
     tableName: 'dorms'

@@ -108,7 +108,7 @@ const Profile = () => {
                         <img 
                             src= {user?.profile_picture || assets.defaultPic}
                             alt="Profile" 
-                            className="w-32 h-32 rounded-full shadow-lg mb-4"
+                            className="w-32 h-32 rounded-full onject-cover shadow-lg mb-4"
                         />
                         <input type="file" onChange={handleProfilePictureUpload} className="mt-2" />
                         <h2 className="text-2xl font-semibold">{editing ? 
