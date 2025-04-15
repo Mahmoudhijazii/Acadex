@@ -13,36 +13,43 @@ const getListings = async (req , res) => {
     }
 }
 
-const postItem = async (req , res) => {
-    try{
-        const {title, description, price} = req.body;
-
-        if (!title || !description || !price){
-            return res.status(400).json({ error: 'Title, description and price are required.' });
-        }
-
-        const newItem = await Listing.create({
-            user_id: req.user.id,
-            title,
-            description,
-            price,
-        });
-
-        const listingWithUser = await Listing.findOne({
-            where: { id: newItem.id },
-            include: {
-            model: User,
-            attributes: ['id', 'name'], 
-            as: 'users'
-            },
-        });
-
-        res.status(201).json(listingWithUser);
-    } catch{
-        console.error(error);
-        res.status(500).json({ error: 'Failed to post item.' });
+const postItem = async (req, res) => {
+    try {
+      console.log('Incoming Request Body:', req.body);
+      const { title, description, price, image_urls } = req.body;
+  
+      // Basic validation
+      if (!title || !description || !price || !image_urls) {
+        return res.status(400).json({ error: 'All fields including image are required.' });
+      }
+  
+      // Normalize images
+      const imageArray = Array.isArray(image_urls) ? image_urls : image_urls.split(',');
+  
+      const newItem = await Listing.create({
+        user_id: req.user.id,
+        title,
+        description,
+        price,
+        image_urls: imageArray,
+      });
+  
+      // Include user info in response
+      const listingWithUser = await Listing.findOne({
+        where: { id: newItem.id },
+        include: {
+          model: User,
+          attributes: ['id', 'name'],
+          as: 'users',
+        },
+      });
+  
+      res.status(201).json(listingWithUser);
+    } catch (error) {
+      console.error('Error creating listing:', error.message);
+      res.status(500).json({ error: 'Failed to post item.' });
     }
-};
+  };
 
 const getListingById = async (req, res) => {
     const { id } = req.params;

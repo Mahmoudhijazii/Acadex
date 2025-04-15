@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ShopContext } from '../context/ShopContext';
+import supabase from "../supabaseClient";
 
 const Collection = () => {
   const [listings, setListings] = useState([]);
@@ -9,6 +10,7 @@ const Collection = () => {
   const [success, setSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newListing, setNewListing] = useState({ title: '', price: '', description: '' });
+  const [images, setImages] = useState([]); // NEW
   const [isAdmin, setIsAdmin] = useState(false);
 
   const { search } = useContext(ShopContext);
@@ -34,7 +36,7 @@ const Collection = () => {
   }, []);
 
   const handleCardClick = (id) => {
-    navigate(`/product/${id}`); // fixed template string
+    navigate(`/product/${id}`);
   };
 
   const handleDelete = async (id) => {
@@ -49,34 +51,79 @@ const Collection = () => {
     }
   };
 
+  const uploadImagesToSupabase = async () => {
+    const urls = [];
+  
+    for (const file of images) {
+      const fileName = `${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(`collection-images/${fileName}`, file);
+  
+      if (error) throw error;
+  
+      const publicUrl = supabase.storage
+        .from('images')
+        .getPublicUrl(`collection-images/${fileName}`).data.publicUrl;
+      urls.push(publicUrl);
+    }
+  
+    return urls;
+  };  
+
   const handleCreateListing = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+  
+    if (images.length < 2 || images.length > 3) {
+      setError('Please upload between 2 and 3 images.');
+      return;
+    }
+  
     try {
+      const token = localStorage.getItem('token');
+      const uploadedUrls = await uploadImagesToSupabase();
+  
       const response = await axios.post(
-        'https://student-x.onrender.com/api/listings/listings',
-        newListing,
-        { headers: { Authorization: `Bearer ${token}` } }
+        'https://student-x.onrender.com/api/admin/collection/add',
+        {
+          ...newListing,
+          images: uploadedUrls,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-
-      const newPost = {
+  
+      const newItem = {
         ...response.data,
-        users: response.data.users || { name: 'Unknown' },
+        images: uploadedUrls,
       };
-
-      setListings([...listings, newPost]);
-      setShowModal(false);
-      setNewListing({ title: '', price: '', description: '' });
-      setSuccess('Item posted successfully!');
+  
+      setListings([...listings, newItem]);
+      setNewListing({
+        name: '',
+        description: '',
+        price: '',
+        location: '',
+        images: [],
+      });
+      setImages([]);
+      setSuccess('Listing added successfully!');
       setTimeout(() => setSuccess(null), 3000);
+      setIsModalOpen(false);
     } catch (err) {
       console.error(err);
-      setError('Failed to create listing');
+      setError('Failed to add listing');
     }
   };
+  
 
   const handleInputChange = (e) => {
     setNewListing({ ...newListing, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e) => {
+    setImages([...e.target.files]);
   };
 
   const filteredListings = listings.filter((listing) =>
@@ -106,6 +153,13 @@ const Collection = () => {
             className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
             onClick={() => handleCardClick(listing.id)}
           >
+            {listing.image_urls?.length > 0 && (
+              <img
+                src={listing.image_urls[0]}
+                alt="Listing"
+                className="w-full h-48 object-cover rounded mb-4"
+              />
+            )}
             <h2 className="text-xl font-semibold">{listing.title}</h2>
             <p className="text-gray-600 mt-2">${listing.price}</p>
             <p className="text-gray-500 mt-2">Seller: {listing.users?.name || 'Unknown'}</p>
@@ -117,7 +171,7 @@ const Collection = () => {
               {isAdmin && (
                 <button
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click
+                    e.stopPropagation();
                     handleDelete(listing.id);
                   }}
                   className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg"
@@ -160,6 +214,12 @@ const Collection = () => {
                 placeholder="Description"
                 className="w-full p-2 mb-4 border rounded"
                 required
+              />
+              <input
+                type="file"
+                // accept="image/*"
+                multiple
+                onChange={(e) => setImages(Array.from(e.target.files))}
               />
               <div className="flex justify-end">
                 <button
