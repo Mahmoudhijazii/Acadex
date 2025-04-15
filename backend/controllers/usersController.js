@@ -126,7 +126,7 @@ const updateProfilePicture = async (req, res) => {
         const { profile_picture } = req.body;
 
         await User.update(
-            { profile_pic: profile_picture },
+            { profile_picture : profile_picture },
             { where: { id: userId } }
         );
 
