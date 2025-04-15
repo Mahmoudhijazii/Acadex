@@ -25,7 +25,7 @@ const Dorm = () => {
         // Parse image_urls from JSON string to array
         const updatedDorms = dorm.data.map((d) => ({
           ...d,
-          image_urls: d.image_urls ? JSON.parse(d.image_urls) : [],
+          image_urls: d.image_urls ,
         }));
         setDorm(updatedDorms);
       } catch (err) {
@@ -86,6 +86,7 @@ const Dorm = () => {
       const token = localStorage.getItem('token');
       const uploadedUrls = await uploadImagesToSupabase();
 
+      console.log('Request Payload:', { title, description, location, price, image_urls: uploadedUrls });
       const response = await axios.post(
         'https://student-x.onrender.com/api/admin/dorms/add',
         {

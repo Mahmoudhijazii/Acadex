@@ -50,6 +50,7 @@ const deleteDorm = async (req , res) => {
 
 const postDorm = async (req, res) => {
     try {
+      console.log('Incoming Request Body:', req.body);
       const { title, description, location, price, image_urls } = req.body;
   
       if (req.user.role !== 'admin') {
@@ -59,13 +60,15 @@ const postDorm = async (req, res) => {
       if (!title || !description || !location || !price || !image) {
         return res.status(400).json({ error: 'All fields including image are required.' });
       }
+
+      const imageArray = Array.isArray(image_urls) ? image_urls : image_urls.split(',');
   
       const newDorm = await Dorm.create({
         title,
         description,
         location,
         price,
-        image_urls, // This is the Supabase URL coming from the frontend
+        image_urls : imageArray, // This is the Supabase URL coming from the frontend
       });
   
       res.status(201).json(newDorm);
