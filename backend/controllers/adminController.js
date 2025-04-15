@@ -57,7 +57,7 @@ const postDorm = async (req, res) => {
         return res.status(403).json({ error: 'Only admins can add dorms.' });
       }
   
-      if (!title || !description || !location || !price || !image) {
+      if (!title || !description || !location || !price || !image_urls) {
         return res.status(400).json({ error: 'All fields including image are required.' });
       }
 

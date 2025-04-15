@@ -161,7 +161,7 @@ const Dorm = () => {
               <input
                 type="file"
                 multiple
-                accept="image/*"
+                // accept="image/*"
                 className="w-full p-2 mb-4 border rounded"
                 onChange={(e) => setImages([...e.target.files])}
                 required
