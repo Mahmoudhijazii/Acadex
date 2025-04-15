@@ -50,14 +50,14 @@ const deleteDorm = async (req , res) => {
 
 const postDorm = async (req, res) => {
     try {
-      const { title, description, location, price } = req.body;
+      const { title, description, location, price, image } = req.body;
   
       if (req.user.role !== 'admin') {
         return res.status(403).json({ error: 'Only admins can add dorms.' });
       }
   
-      if (!title || !description || !location || !price) {
-        return res.status(400).json({ error: 'All fields are required.' });
+      if (!title || !description || !location || !price || !image) {
+        return res.status(400).json({ error: 'All fields including image are required.' });
       }
   
       const newDorm = await Dorm.create({
@@ -65,15 +65,16 @@ const postDorm = async (req, res) => {
         description,
         location,
         price,
+        image_urls, // This is the Supabase URL coming from the frontend
       });
-      
   
       res.status(201).json(newDorm);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to create dorm.' });
-    }
-  };
+      console.error('Error creating dorm:', error.message);
+      res.status(500).json({ error: 'Failed to create dorm.' });
+    }
+  };
+  
 
 
 module.exports =  {deleteCourse, deleteListing, deleteDorm, postDorm} ;

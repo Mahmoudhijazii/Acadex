@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import DormCard from '../components/DormCard';
-
+import { supabase } from '../supabaseClient'; // Make sure this exists
 
 const Dorm = () => {
   const navigate = useNavigate();
 
   const [dorm, setDorm] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [image, setImage] = useState('');
+  const [images, setImages] = useState([]);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
@@ -18,12 +18,16 @@ const Dorm = () => {
   const [success, setSuccess] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-
   useEffect(() => {
     const fetchDorms = async () => {
       try {
         const dorm = await axios.get('https://student-x.onrender.com/api/dorms/posts');
-        setDorm(dorm.data);
+        // Parse image_urls from JSON string to array
+        const updatedDorms = dorm.data.map((d) => ({
+          ...d,
+          image_urls: d.image_urls ? JSON.parse(d.image_urls) : [],
+        }));
+        setDorm(updatedDorms);
       } catch (err) {
         console.error(err);
         setError('Failed to fetch dorms');
@@ -32,10 +36,7 @@ const Dorm = () => {
 
     const checkAdmin = () => {
       const role = localStorage.getItem('role');
-      if(role==='admin')
-      setIsAdmin(true);
-      if(role==='user')
-      setIsAdmin(false);
+      setIsAdmin(role === 'admin');
     };
 
     fetchDorms();
@@ -48,36 +49,73 @@ const Dorm = () => {
       await axios.delete(`https://student-x.onrender.com/api/admin/dorms/delete/${dormId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
       setDorm((prev) => prev.filter((d) => d.id !== dormId));
     } catch (err) {
       console.error('Failed to delete dorm:', err);
       alert('Failed to delete dorm');
     }
   };
-  
-  
+
+  const uploadImagesToSupabase = async () => {
+    const urls = [];
+
+    for (const file of images) {
+      const fileName = `${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(`dorm-images/${fileName}`, file);
+
+      if (error) throw error;
+
+      const publicUrl = supabase.storage.from('images').getPublicUrl(`dorm-images/${fileName}`).data.publicUrl;
+      urls.push(publicUrl);
+    }
+
+    return urls;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (images.length < 2 || images.length > 3) {
+      setError('Please upload between 2 and 3 images.');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
+      const uploadedUrls = await uploadImagesToSupabase();
+
       const response = await axios.post(
         'https://student-x.onrender.com/api/admin/dorms/add',
-        { title, description, location, price },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          title,
+          description,
+          location,
+          price,
+          image_urls: uploadedUrls,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      setDorm([...dorm, response.data]);
-      // setImage('');
+      const newDorm = {
+        ...response.data,
+        image_urls: uploadedUrls,
+      };
+
+      setDorm([...dorm, newDorm]);
       setTitle('');
       setLocation('');
       setPrice('');
       setDescription('');
+      setImages([]);
       setSuccess('Dorm added successfully!');
       setTimeout(() => setSuccess(null), 3000);
       setIsModalOpen(false);
     } catch (err) {
+      console.error(err);
       setError('Failed to add dorm');
     }
   };
@@ -100,34 +138,31 @@ const Dorm = () => {
       {error && <p className="text-red-600">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {dorm.map((dormItem, index) => (
-        <DormCard
-          key={index}
-          // image={dormItem.images && dormItem.images.length > 0 ? dormItem.images[0] : 'default-image-url'}
-          title={dormItem.title}
-          location={dormItem.location}
-          price={dormItem.price}
-          onClick={() => navigate(`/dorms/${dormItem.id}`)}
-          isAdmin={isAdmin}
-          onDelete={() => handleDelete(dormItem.id)}
-        />
-      ))}
-
-
+        {dorm.map((dormItem, index) => (
+          <DormCard
+            key={index}
+            image={dormItem.image_urls?.[0] || 'fallback.jpg'}
+            title={dormItem.title}
+            location={dormItem.location}
+            price={dormItem.price}
+            onClick={() => navigate(`/dorms/${dormItem.id}`)}
+            isAdmin={isAdmin}
+            onDelete={() => handleDelete(dormItem.id)}
+          />
+        ))}
       </div>
 
-      {/* Modal for adding a dorm */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-2xl font-semibold mb-4">Upload a Dorm</h2>
             <form onSubmit={handleSubmit}>
               <input
-                type="text"
-                placeholder="Image URL"
+                type="file"
+                multiple
+                accept="image/*"
                 className="w-full p-2 mb-4 border rounded"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
+                onChange={(e) => setImages([...e.target.files])}
                 required
               />
               <input
@@ -184,4 +219,4 @@ const Dorm = () => {
   );
 };
 
-export default Dorm;
+export default Dorm;

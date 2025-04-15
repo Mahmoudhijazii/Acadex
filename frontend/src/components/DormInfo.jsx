@@ -14,6 +14,7 @@ const DormInfo = () => {
       try {
         const response = await axios.get(`https://student-x.onrender.com/api/dorms/${id}`);
         setDorm(response.data);
+        setCurrentIndex(0);
       } catch (err) {
         setError("Failed to load dorm details.");
       } finally {
@@ -27,7 +28,7 @@ const DormInfo = () => {
   if (loading) return <h2>Loading...</h2>;
   if (error || !dorm) return <h2>{error || "Dorm not found"}</h2>;
 
-  const images = dorm.images || [];
+  const images = dorm.image_urls || [];
 
     return (
         <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
