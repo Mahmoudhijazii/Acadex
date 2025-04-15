@@ -67,7 +67,7 @@ const Profile = () => {
         try {
             // Step 1: Upload image to Supabase Storage
             const { data, error } = await supabase.storage
-                .from('your-bucket-name') // 👈 replace with your Supabase bucket name
+                .from('images') // 👈 replace with your Supabase bucket name
                 .upload(filePath, file);
     
             if (error) throw error;
@@ -75,7 +75,7 @@ const Profile = () => {
             // Step 2: Get the public URL
             const { data: publicUrlData } = supabase
                 .storage
-                .from('your-bucket-name')
+                .from('images')
                 .getPublicUrl(filePath);
     
             const publicUrl = publicUrlData.publicUrl;
