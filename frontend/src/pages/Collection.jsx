@@ -9,7 +9,7 @@ const Collection = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [newListing, setNewListing] = useState({ title: '', price: '', description: '' });
+  const [newListing, setNewListing] = useState({ title: '', price: '', description: '', image_urls: [] });
   const [images, setImages] = useState([]); // NEW
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -84,10 +84,10 @@ const Collection = () => {
       const uploadedUrls = await uploadImagesToSupabase();
   
       const response = await axios.post(
-        'https://student-x.onrender.com/api/admin/collection/add',
+        'https://student-x.onrender.com/api/listings/listings',
         {
           ...newListing,
-          images: uploadedUrls,
+          image_urls: uploadedUrls,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -96,7 +96,7 @@ const Collection = () => {
   
       const newItem = {
         ...response.data,
-        images: uploadedUrls,
+        image_urls: uploadedUrls,
       };
   
       setListings([...listings, newItem]);
@@ -105,12 +105,12 @@ const Collection = () => {
         description: '',
         price: '',
         location: '',
-        images: [],
+        image_urls: [],
       });
       setImages([]);
       setSuccess('Listing added successfully!');
       setTimeout(() => setSuccess(null), 3000);
-      setIsModalOpen(false);
+      setShowModal(false);
     } catch (err) {
       console.error(err);
       setError('Failed to add listing');
