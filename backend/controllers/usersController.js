@@ -82,7 +82,20 @@ const login = async (req , res) => {
             return res.status(400).json({ error: 'Invalid email or password.' });
         }
         const token = jwt.sign({ id : user.id , role : user.role} , 'mostafa' , {expiresIn : '3h'});
-        const firebaseToken = await admin.auth().createCustomToken(user.id.toString());
+
+         // wrap createCustomToken in its own try/catch
+        let firebaseToken;
+        try {
+            console.log("[login] creating Firebase custom token for uid:", user.id);
+            firebaseToken = await admin.auth().createCustomToken(
+                user.id.toString()
+            );
+            console.log("[login] Firebase custom token:", firebaseToken);
+        } catch (fbErr) {
+            console.error("[login] ❌ createCustomToken failed:", fbErr);
+            // rethrow so outer catch will send 500
+            throw fbErr;
+        }
 
         res.status(200).json({
         message: 'Login successful.',
@@ -92,8 +105,10 @@ const login = async (req , res) => {
         user: { id: user.id, email: user.email }
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to log in.' });
+        console.error("[login] unexpected error:", err);
+        return res
+        .status(500)
+        .json({ error: "Failed to log in.", details: err.message });
     }
 };
 

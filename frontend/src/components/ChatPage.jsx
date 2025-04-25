@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { db, auth } from '../firebase';
 import {
-  getFirestore,
   collection,
   query,
   orderBy,
@@ -16,12 +15,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 const ChatPage = () => {
   const navigate = useNavigate();
-  const db = getFirestore();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers]           = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages]     = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError]           = useState('');
 
   const token = localStorage.getItem('token');
 
@@ -51,19 +49,18 @@ const ChatPage = () => {
       });
   }, [token]);
 
-  // Listen for messages
+  // Real-time listener for messages
   useEffect(() => {
     if (!selectedUser || !auth.currentUser) return;
 
     const currentUid = auth.currentUser.uid;
     const chatId = [currentUid, selectedUser.id].sort().join('-');
-
     const messagesRef = collection(db, 'chats', chatId, 'messages');
     const q = query(messagesRef, orderBy('timestamp'));
 
     const unsubscribe = onSnapshot(
       q,
-      snapshot => setMessages(snapshot.docs.map(doc => doc.data())),
+      snap => setMessages(snap.docs.map(d => d.data())),
       err => {
         console.error('Snapshot listener error:', err);
         setError('Could not load messages.');
@@ -73,7 +70,7 @@ const ChatPage = () => {
     return () => unsubscribe();
   }, [selectedUser]);
 
-  // Send message
+  // Send a new message
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !auth.currentUser || !selectedUser) return;
 
@@ -100,7 +97,9 @@ const ChatPage = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen">
       {error && (
-        <p className="w-full text-red-600 bg-red-100 p-4 text-center">{error}</p>
+        <p className="w-full text-red-600 bg-red-100 p-4 text-center">
+          {error}
+        </p>
       )}
       <div className="flex flex-1">
         {/* User List */}
@@ -130,9 +129,9 @@ const ChatPage = () => {
               </div>
 
               <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg border shadow-md">
-                {messages.map((msg, idx) => (
+                {messages.map((msg, i) => (
                   <div
-                    key={idx}
+                    key={i}
                     className={`mb-4 p-2 rounded-lg ${
                       msg.senderId === auth.currentUser.uid
                         ? 'bg-blue-100 self-end'
@@ -172,4 +171,3 @@ const ChatPage = () => {
 };
 
 export default ChatPage;
-

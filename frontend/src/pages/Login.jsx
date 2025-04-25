@@ -1,3 +1,4 @@
+// frontend/pages/Login.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -13,29 +14,29 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Clear flash messages after 3s
   useEffect(() => {
-    if (error || success) {
-      const timer = setTimeout(() => {
-        setError('');
-        setSuccess('');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
+    if (!error && !success) return;
+    const id = setTimeout(() => {
+      setError('');
+      setSuccess('');
+    }, 3000);
+    return () => clearTimeout(id);
   }, [error, success]);
 
-  const onSubmitHandler = async (event) => {
-    event.preventDefault();
+  const onSubmitHandler = async e => {
+    e.preventDefault();
     setError('');
     setSuccess('');
 
-    // Handle email verification stage
+    // 1) If we're verifying a new signup code:
     if (showVerification) {
       try {
-        const response = await axios.post(
+        const { data } = await axios.post(
           'https://student-x.onrender.com/api/users/verify',
           { email: formData.email, verificationCode }
         );
-        setSuccess(response.data.message);
+        setSuccess(data.message);
         setShowVerification(false);
         setTimeout(() => navigate('/login'), 1000);
       } catch (err) {
@@ -44,43 +45,63 @@ const Login = () => {
       return;
     }
 
-    // Sign Up flow
+    // 2) Sign-up flow
     if (currentState === 'Sign Up') {
       try {
-        const response = await axios.post(
+        const { data } = await axios.post(
           'https://student-x.onrender.com/api/users/signup',
           formData
         );
-        setSuccess(response.data.message);
+        setSuccess(data.message);
         setShowVerification(true);
       } catch (err) {
         setError(err.response?.data?.error || 'Signup failed.');
       }
-    } else {
-      // Login flow with Firebase custom token
-      try {
-        const response = await axios.post(
-          'https://student-x.onrender.com/api/users/login',
-          { email: formData.email, password: formData.password }
-        );
-
-        const { token, firebaseToken, role } = response.data;
-
-        // Store backend JWT and role
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role);
-
-        // Sign in to Firebase with custom token
-        await signInWithCustomToken(auth, firebaseToken);
-
-        setSuccess('Login successful.');
-        setTimeout(() => navigate('/'), 1000);
-      } catch (err) {
-        setError(err.response?.data?.error || 'Login failed.');
-      }
+      setFormData({ name: '', email: '', password: '' });
+      return;
     }
 
-    // Reset form fields
+    // 3) Login flow
+    let backendToken, firebaseToken, role;
+    try {
+      const { data } = await axios.post(
+        'https://student-x.onrender.com/api/users/login',
+        { email: formData.email, password: formData.password }
+      );
+      backendToken = data.token;
+      firebaseToken = data.firebaseToken;
+      role = data.role;
+
+      console.log('🔥 backend JWT:', backendToken);
+      console.log('🔥 customToken:', firebaseToken);
+      console.log('🔥 firebase config apiKey:', auth.config.apiKey);
+
+      localStorage.setItem('token', backendToken);
+      localStorage.setItem('role', role);
+    } catch (err) {
+      console.error('❌ Backend login error:', err.response ?? err);
+      setError(err.response?.data?.error || 'Login failed.');
+      return;
+    }
+
+    // 4) Firebase sign-in with the custom token
+    try {
+      await signInWithCustomToken(auth, firebaseToken);
+      console.log('✅ Firebase sign-in successful');
+    } catch (firebaseErr) {
+      // This will include the HTTP response payload under customData._tokenResponse
+      console.error(
+        '❌ Firebase signInWithCustomToken error:',
+        firebaseErr.code,
+        firebaseErr.message,
+        firebaseErr.customData?._tokenResponse
+      );
+      setError(`Firebase Auth error: ${firebaseErr.message}`);
+      return;
+    }
+
+    setSuccess('Login successful.');
+    setTimeout(() => navigate('/'), 1000);
     setFormData({ name: '', email: '', password: '' });
   };
 
@@ -94,38 +115,40 @@ const Login = () => {
         <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
       </div>
 
-      {error && <p className="bg-gray-900 text-gray-300 px-4 py-2 rounded-md">{error}</p>}
-      {success && <p className="bg-gray-700 text-gray-200 px-4 py-2 rounded-md">{success}</p>}
+      {error && (
+        <p className="bg-gray-900 text-gray-300 px-4 py-2 rounded-md">{error}</p>
+      )}
+      {success && (
+        <p className="bg-gray-700 text-gray-200 px-4 py-2 rounded-md">{success}</p>
+      )}
 
       {!showVerification ? (
         <>
-          {currentState !== 'Login' && (
+          {currentState === 'Sign Up' && (
             <input
               type="text"
               className="w-full px-3 py-2 border border-gray-800"
               placeholder="Full Name"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
             />
           )}
-
           <input
             type="email"
             className="w-full px-3 py-2 border border-gray-800"
             placeholder="Email"
             required
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={e => setFormData({ ...formData, email: e.target.value })}
           />
-
           <input
             type="password"
             className="w-full px-3 py-2 border border-gray-800"
             placeholder="Password"
             required
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={e => setFormData({ ...formData, password: e.target.value })}
           />
         </>
       ) : (
@@ -135,7 +158,7 @@ const Login = () => {
           placeholder="Enter Verification Code"
           required
           value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
+          onChange={e => setVerificationCode(e.target.value)}
         />
       )}
 
@@ -143,17 +166,11 @@ const Login = () => {
         <div className="w-full flex justify-between text-sm mt-[-8px]">
           <p className="cursor-pointer">Forgot your password?</p>
           {currentState === 'Login' ? (
-            <p
-              onClick={() => setCurrentState('Sign Up')}
-              className="cursor-pointer"
-            >
+            <p onClick={() => setCurrentState('Sign Up')} className="cursor-pointer">
               Create account
             </p>
           ) : (
-            <p
-              onClick={() => setCurrentState('Login')}
-              className="cursor-pointer"
-            >
+            <p onClick={() => setCurrentState('Login')} className="cursor-pointer">
               Login Here
             </p>
           )}
