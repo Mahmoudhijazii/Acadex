@@ -16,6 +16,7 @@ import Courses from './components/Courses'
 import Dorms from './components/Dorms'
 import Profile from './pages/Profile'
 import DormInfo from './components/DormInfo'
+import ChatPage from './components/ChatPage'
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
       <Route path='/courses' element = {<Courses/>} />
       <Route path='/dorms' element = {<Dorms/>} />
       <Route path='/dorms/:id' element = {<DormInfo/>} />
+      <Route path='/chatpage' element = {<ChatPage/>} />
 
       </Routes>
       <Footer/>

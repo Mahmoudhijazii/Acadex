@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {User, TutorCourse, Listing} = require('../models');
 const sendVerificationEmail = require('../mailer'); 
+const admin = require('../firebaseAdmin');
 
 const tempUsers = {};
 
@@ -81,7 +82,15 @@ const login = async (req , res) => {
             return res.status(400).json({ error: 'Invalid email or password.' });
         }
         const token = jwt.sign({ id : user.id , role : user.role} , 'mostafa' , {expiresIn : '3h'});
-        res.status(200).json({ message: 'Login successful.', token, role: user.role });
+        const firebaseToken = await admin.auth().createCustomToken(user.id.toString());
+
+        res.status(200).json({
+        message: 'Login successful.',
+        token,        // backend JWT
+        firebaseToken,// Firebase Auth custom token
+        role: user.role,
+        user: { id: user.id, email: user.email }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to log in.' });
@@ -137,4 +146,15 @@ const updateProfilePicture = async (req, res) => {
     }
 };
 
-module.exports = {signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture};
+const getAllUsers = async (req, res) =>{
+    try {
+        const users = await User.findAll({ attributes: ['id', 'name', 'email'] }); // Adjust attributes as needed
+        if (!users) return res.status(404).json({ error: 'User not found' });
+        res.json(users);
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users.' });
+      }
+}
+
+module.exports = {signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture, getAllUsers};
+

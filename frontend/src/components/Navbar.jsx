@@ -42,10 +42,10 @@ const Navbar = () => {
                 <p>ABOUT</p>
                 <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
             </NavLink>
-            <NavLink to='/contact' className='flex flex-col items-center gap-1'>
-                <p>CONTACT</p>
-                <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
-            </NavLink>
+            <NavLink to='/chatpage' className='flex flex-col items-center gap-1'>
+                 <p>STUDENT-CHAT</p>
+                 <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
+             </NavLink>
         </ul>
         <div className='flex items-center gap-6'>
             <img onClick={() => setShowSearch(true)} src={assets.search_icon} className='w-5 cursor-pointer' alt="Search" />
