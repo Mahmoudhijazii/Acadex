@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { signInWithCustomToken } from 'firebase/auth';
-import { auth } from '../firebase';
+// import { signInWithCustomToken } from 'firebase/auth';
+// import { auth } from '../firebase';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -73,8 +73,8 @@ const Login = () => {
       role = data.role;
 
       console.log('🔥 backend JWT:', backendToken);
-      console.log('🔥 customToken:', firebaseToken);
-      console.log('🔥 firebase config apiKey:', auth.config.apiKey);
+      // console.log('🔥 customToken:', firebaseToken);
+      // console.log('🔥 firebase config apiKey:', auth.config.apiKey);
 
       localStorage.setItem('token', backendToken);
       localStorage.setItem('role', role);
@@ -85,20 +85,20 @@ const Login = () => {
     }
 
     // 4) Firebase sign-in with the custom token
-    try {
-      await signInWithCustomToken(auth, firebaseToken);
-      console.log('✅ Firebase sign-in successful');
-    } catch (firebaseErr) {
-      // This will include the HTTP response payload under customData._tokenResponse
-      console.error(
-        '❌ Firebase signInWithCustomToken error:',
-        firebaseErr.code,
-        firebaseErr.message,
-        firebaseErr.customData?._tokenResponse
-      );
-      setError(`Firebase Auth error: ${firebaseErr.message}`);
-      return;
-    }
+    // try {
+    //   await signInWithCustomToken(auth, firebaseToken);
+    //   console.log('✅ Firebase sign-in successful');
+    // } catch (firebaseErr) {
+    //   // This will include the HTTP response payload under customData._tokenResponse
+    //   console.error(
+    //     '❌ Firebase signInWithCustomToken error:',
+    //     firebaseErr.code,
+    //     firebaseErr.message,
+    //     firebaseErr.customData?._tokenResponse
+    //   );
+    //   setError(`Firebase Auth error: ${firebaseErr.message}`);
+    //   return;
+    // }
 
     setSuccess('Login successful.');
     setTimeout(() => navigate('/'), 1000);

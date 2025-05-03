@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {User, TutorCourse, Listing} = require('../models');
 const sendVerificationEmail = require('../mailer'); 
-const admin = require('../firebaseAdmin');
+// const admin = require('../firebaseAdmin');
 
 const tempUsers = {};
 
@@ -84,23 +84,23 @@ const login = async (req , res) => {
         const token = jwt.sign({ id : user.id , role : user.role} , 'mostafa' , {expiresIn : '3h'});
 
          // wrap createCustomToken in its own try/catch
-        let firebaseToken;
-        try {
-            console.log("[login] creating Firebase custom token for uid:", user.id);
-            firebaseToken = await admin.auth().createCustomToken(
-                user.id.toString()
-            );
-            console.log("[login] Firebase custom token:", firebaseToken);
-        } catch (fbErr) {
-            console.error("[login] ❌ createCustomToken failed:", fbErr);
-            // rethrow so outer catch will send 500
-            throw fbErr;
-        }
+        // let firebaseToken;
+        // try {
+        //     console.log("[login] creating Firebase custom token for uid:", user.id);
+        //     firebaseToken = await admin.auth().createCustomToken(
+        //         user.id.toString()
+        //     );
+        //     console.log("[login] Firebase custom token:", firebaseToken);
+        // } catch (fbErr) {
+        //     console.error("[login] ❌ createCustomToken failed:", fbErr);
+        //     // rethrow so outer catch will send 500
+        //     throw fbErr;
+        // }
 
         res.status(200).json({
         message: 'Login successful.',
         token,        // backend JWT
-        firebaseToken,// Firebase Auth custom token
+        // firebaseToken,// Firebase Auth custom token
         role: user.role,
         user: { id: user.id, email: user.email }
         });

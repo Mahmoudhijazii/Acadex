@@ -4,12 +4,12 @@ const multer = require('multer');
 const { authenticate } = require('../middleware/auth');
 const router = express.Router();
 
-// Multer storage configuration for local uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
-const multerUpload = multer({ storage: storage });
+// // Multer storage configuration for local uploads
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => cb(null, 'uploads/'),
+//     filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+// });
+// const multerUpload = multer({ storage: storage });
 
 router.post('/signup', signup);
 router.post('/verify', verifyUser);
