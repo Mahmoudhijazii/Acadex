@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import DormCard from '../components/DormCard';
 import supabase from "../supabaseClient";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Dorm = () => {
   const navigate = useNavigate();
@@ -30,7 +32,8 @@ const Dorm = () => {
         setDorm(updatedDorms);
       } catch (err) {
         console.error(err);
-        setError('Failed to fetch dorms');
+        // setError('Failed to fetch dorms');
+        toast.error('Failed to fetch dorms');
       }
     };
 
@@ -51,8 +54,9 @@ const Dorm = () => {
       });
       setDorm((prev) => prev.filter((d) => d.id !== dormId));
     } catch (err) {
-      console.error('Failed to delete dorm:', err);
-      alert('Failed to delete dorm');
+      // console.error('Failed to delete dorm:', err);
+      // alert('Failed to delete dorm');
+      toast.error('Failed to delete dorm');
     }
   };
 
@@ -78,7 +82,8 @@ const Dorm = () => {
     e.preventDefault();
 
     if (images.length < 2 || images.length > 3) {
-      setError('Please upload between 2 and 3 images.');
+      // setError('Please upload between 2 and 3 images.');
+      toast.error('Please upload between 2 and 3 images.');
       return;
     }
 
@@ -112,12 +117,14 @@ const Dorm = () => {
       setPrice('');
       setDescription('');
       setImages([]);
-      setSuccess('Dorm added successfully!');
-      setTimeout(() => setSuccess(null), 3000);
+      // setSuccess('Dorm added successfully!');
+      // setTimeout(() => setSuccess(null), 3000);
+      toast.success('Dorm added successfully!');
       setIsModalOpen(false);
     } catch (err) {
       console.error(err);
-      setError('Failed to add dorm');
+      // setError('Failed to add dorm');
+      toast.error('Failed to add dorm');
     }
   };
 
@@ -135,8 +142,9 @@ const Dorm = () => {
         )}
       </div>
 
-      {success && <p className="text-green-600">{success}</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      {/* {success && <p className="text-green-600">{success}</p>}
+      {error && <p className="text-red-600">{error}</p>} */}
+      <ToastContainer />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {dorm.map((dormItem, index) => (

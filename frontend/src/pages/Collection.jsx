@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ShopContext } from '../context/ShopContext';
 import supabase from "../supabaseClient";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Collection = () => {
   const [listings, setListings] = useState([]);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  // const [error, setError] = useState(null);
+  // const [success, setSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newListing, setNewListing] = useState({ title: '', price: '', description: '', image_urls: [] });
   const [images, setImages] = useState([]); // NEW
@@ -22,7 +24,8 @@ const Collection = () => {
         const response = await axios.get('https://student-x.onrender.com/api/listings/listings');
         setListings(response.data);
       } catch (err) {
-        setError('Failed to fetch listings');
+        // setError('Failed to fetch listings');
+        toast.error('Failed to fetch listings');
       }
     };
 
@@ -47,7 +50,8 @@ const Collection = () => {
       });
       setListings((prev) => prev.filter((listing) => listing.id !== id));
     } catch (err) {
-      setError('Failed to delete listing');
+      // setError('Failed to delete listing');
+      toast.error('Failed to delete listing');
     }
   };
 
@@ -75,7 +79,8 @@ const Collection = () => {
     e.preventDefault();
   
     if (images.length < 2 || images.length > 3) {
-      setError('Please upload between 2 and 3 images.');
+      // setError('Please upload between 2 and 3 images.');
+      toast.error('Please upload between 2 and 3 images.');
       return;
     }
   
@@ -108,12 +113,14 @@ const Collection = () => {
         image_urls: [],
       });
       setImages([]);
-      setSuccess('Listing added successfully!');
-      setTimeout(() => setSuccess(null), 3000);
+      // setSuccess('Listing added successfully!');
+      // setTimeout(() => setSuccess(null), 3000);
+      toast.success('Listing added successfully!');
       setShowModal(false);
     } catch (err) {
       console.error(err);
-      setError('Failed to add listing');
+      // setError('Failed to add listing');
+      toast.error('Failed to add listing');
     }
   };
   
@@ -133,6 +140,9 @@ const Collection = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-8">
+      <p className="text-gray-700 mb-6 text-lg">
+        Browse through items posted for sale by fellow students at your university. From books and gadgets to fashion and more, these listings are shared by your peers. Want to get in touch with a seller? Just click on the <strong>Contact Seller</strong> button. Have something to sell yourself? Hit the <strong>Add an Item</strong> button and share your listing with the community!
+      </p>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Student-X Listings</h1>
         <button
@@ -143,8 +153,9 @@ const Collection = () => {
         </button>
       </div>
 
-      {success && <p className="text-green-600">{success}</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      {/* {success && <p className="text-green-600">{success}</p>}
+      {error && <p className="text-red-600">{error}</p>} */}
+      <ToastContainer />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredListings.map((listing, index) => (
@@ -165,9 +176,17 @@ const Collection = () => {
             <p className="text-gray-500 mt-2">Seller: {listing.users?.name || 'Unknown'}</p>
 
             <div className="flex gap-2 mt-4">
-              <button className="bg-black hover:bg-gray-800 text-white py-2 px-4 rounded-lg">
+              {/* <button className="bg-black hover:bg-gray-800 text-white py-2 px-4 rounded-lg">
                 Contact Seller
-              </button>
+              </button> */}
+              <a
+                  href={`/chatpage?seller=${listing.user_id}`} // Pass the losting's seller ID in the URL
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-black hover:bg-gray-800 transition-all duration-300 text-white py-2 px-4 rounded-lg"
+                >
+                  <p>Contact Seller</p>
+              </a>
               {isAdmin && (
                 <button
                   onClick={(e) => {

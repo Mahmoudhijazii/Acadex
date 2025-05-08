@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { assets } from '../assets/assets'
 
 const Footer = () => {
@@ -8,17 +9,23 @@ const Footer = () => {
             <div>
                 <img src={assets.logo} className='mb-5 w-24 cursor-pointer' alt="" />
                 <p className='w-full md:w-2/3 text-gray-600'>
-                © 2025 Student-X. All rights reserved. Designed for university students to connect, share, and thrive.
+                    Student-X is your go-to platform for discovering courses, finding dorms, 
+                    and connecting with fellow university students. Built with students, for students.
                 </p>
             </div>
             <div>
                 <p className='text-xl font-medium mb-4 mt-4'>COMPANY</p>
                 <ul className='flex flex-col gap-1 text-gray-600'>
-                    <li>Home</li>
-                    <li>Collection</li>
-                    <li>Courses</li>
-                    <li>Dorms</li>
-                    <li>About us</li>
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/collection">Collection</Link></li>
+                    <li><Link to="/courses">Courses</Link></li>
+                    <li><Link to="/dorms">Dorms</Link></li>
+                    <li><Link to="/about">About</Link></li>
+                    <li>
+                         <a href='/chatpage' target='_blank' rel='noopener noreferrer' >
+                             <p>Student-Chat</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div>
@@ -44,3 +51,5 @@ const Footer = () => {
 }
 
 export default Footer
+
+

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Toaster } from 'react-hot-toast';
 import {Routes,Route} from 'react-router-dom'
 import Home from './pages/Home'
 import Collection from './pages/Collection'
@@ -22,6 +23,7 @@ const App = () => {
   return (
     // route container
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       <SearchBar />
       <Routes>
