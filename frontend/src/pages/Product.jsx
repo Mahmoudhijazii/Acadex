@@ -258,14 +258,25 @@ const Product = () => {
             <strong>Seller:</strong> {listing.users?.name || "Unknown"}
           </p>
 
-          {isAdmin && (
-            <button
-              onClick={handleDelete}
-              className="ml-4 bg-red-600 text-white px-8 py-3 text-sm mt-4 rounded hover:bg-red-700 transition"
+          <div className="flex items-center gap-4 mt-6">
+            <a
+              href={`/chatpage?seller=${listing.user_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-black hover:bg-gray-800 transition-all duration-300 text-white py-2 px-4 rounded-lg"
             >
-              DELETE
-            </button>
-          )}
+              Contact Seller
+            </a>
+
+            {isAdmin && (
+              <button
+               onClick={handleDelete}
+                className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition"
+              >
+                Delete
+              </button>
+            )}
+          </div>
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
             <p>Sold by your University students.</p>

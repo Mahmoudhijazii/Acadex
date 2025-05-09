@@ -212,15 +212,50 @@ import { Link, NavLink } from 'react-router-dom';
 import { FaRegComments } from 'react-icons/fa';
 import { assets } from '../assets/assets';
 import { ShopContext } from '../context/ShopContext';
+import { isTokenExpired, logoutUser } from '../utils/tokenUtils';
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faComments } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+library.add(faComments)
+
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const { setShowSearch } = useContext(ShopContext);
 
+  // Check if token is valid and update state accordingly
+  const checkTokenValidity = () => {
+    const currentToken = localStorage.getItem('token');
+    
+    if (!currentToken) {
+      setToken(null);
+      return;
+    }
+
+    // Check if token is expired
+    if (isTokenExpired(currentToken)) {
+      console.log('Token has expired, logging out user');
+      logoutUser();
+      setToken(null);
+    }
+  };
+
   useEffect(() => {
+    // Initial check of token validity
+    checkTokenValidity();
+    
     const syncToken = () => {
-      setToken(localStorage.getItem('token'));
+      const storedToken = localStorage.getItem('token');
+      setToken(storedToken);
+      
+      // If there's a token, verify it's not expired
+      if (storedToken && isTokenExpired(storedToken)) {
+        logoutUser();
+        setToken(null);
+      }
     };
   
     // Listen to custom event when token is manually changed in app
@@ -228,17 +263,19 @@ const Navbar = () => {
   
     // Also listen to 'storage' event for cross-tab logout/login
     window.addEventListener('storage', syncToken);
+    
+    // Set up periodic token validation (every minute)
+    const tokenCheckInterval = setInterval(checkTokenValidity, 60 * 1000);
   
     return () => {
       window.removeEventListener('token-changed', syncToken);
       window.removeEventListener('storage', syncToken);
+      clearInterval(tokenCheckInterval);
     };
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    window.dispatchEvent(new Event('token-changed')); // 🔔 Notify other components
+    logoutUser();
     setToken(null);
     window.location.href = '/';
   };
@@ -256,23 +293,24 @@ const Navbar = () => {
         <NavLink to='/dorms' className='flex flex-col items-center gap-1'><p>DORMS</p></NavLink>
         <NavLink to='/about' className='flex flex-col items-center gap-1'><p>ABOUT</p></NavLink>
         
-          <a href='/chatpage' target='_blank' rel='noopener noreferrer' className='flex flex-col items-center gap-1'>
-            <p>STUDENT-CHAT</p>
-          </a>
-        
       </ul>
 
       <div className='flex items-center gap-6'>
-        {token && (
-          <a href='/chatpage' target='_blank' rel='noopener noreferrer'>
-            <FaRegComments size={20} className='cursor-pointer text-gray-700 hover:text-black' />
-          </a>
-        )}
+      {token && (
+        <a href="/chatpage" target="_blank" rel="noopener noreferrer">
+          <FontAwesomeIcon
+            icon={['far', 'comments']}
+            className="cursor-pointer text-gray-700 hover:text-black"
+            size="lg"
+          />
+        </a>
+      )}
+
 
         {token ? (
           <div className='relative group'>
             <img className='w-5 cursor-pointer' src={assets.profile_icon} alt='Profile' />
-            <div className='absolute right-0 top-7 hidden group-hover:block bg-slate-100 text-gray-500 rounded shadow-md py-2 w-36'>
+            <div className='absolute right-0 top-6 hidden group-hover:block bg-slate-100 text-gray-500 rounded shadow-md py-2 w-36'>
               <button onClick={() => window.location.href = '/profile'} className='block w-full px-5 py-2 text-left hover:text-black'>
                 My Profile
               </button>
@@ -300,15 +338,6 @@ const Navbar = () => {
           <NavLink onClick={() => setVisible(false)} to='/courses' className='py-3 pl-6 border-b'>COURSES</NavLink>
           <NavLink onClick={() => setVisible(false)} to='/dorms' className='py-3 pl-6 border-b'>DORMS</NavLink>
           <NavLink onClick={() => setVisible(false)} to='/about' className='py-3 pl-6 border-b'>ABOUT</NavLink>
-          
-            <a
-              href='/chatpage'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='py-3 pl-6 border-b'
-            >
-              STUDENT-CHAT
-            </a>
           
         </div>
       </div>

@@ -12,7 +12,7 @@ const About = () => {
         <img className='w-full md:max-w-[450px]' src={assets.about_img} alt="" />
         <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-600'>
           <p>
-            Student-x is your go-to campus marketplace built exclusively for university students. Whether you're looking to buy or sell second-hand items, find a reliable tutor, or discover the perfect dorm, we’ve created one platform that does it all—by students, for students.
+            Student-x is your go-to campus marketplace built exclusively for university students. Whether you're looking to buy or sell second-hand items, find a reliable tutor, or discover the perfect dorm, we’ve created one platform that does it all <strong>—FOR STUDENTS - BY STUDENTS—</strong>.
           </p>
           <p>
             From lecture notes to living spaces, Student-x connects you with real needs on campus. Skip the noise, save money, and meet fellow students who are navigating the same journey.

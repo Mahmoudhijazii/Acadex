@@ -5,94 +5,113 @@ import { ShopContext } from '../context/ShopContext';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// FontAwesome imports
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+// add once (you could also move this into your App entrypoint)
+library.add(faCircleInfo);
+
 const CoursesPage = () => {
   const [courses, setCourses] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [courseName, setCourseName] = useState('');
   const [description, setDescription] = useState('');
-  // const [error, setError] = useState(null);
-  // const [success, setSuccess] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // page-info modal state
+  const [showPageInfo, setShowPageInfo] = useState(false);
+  const openPageInfo = () => setShowPageInfo(true);
+  const closePageInfo = () => setShowPageInfo(false);
 
   const { search } = useContext(ShopContext);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('https://student-x.onrender.com/api/courses/posts');
-        setCourses(response.data);
-      } catch (err) {
-        // setError('Failed to fetch courses');
+        const { data } = await axios.get('https://student-x.onrender.com/api/courses/posts');
+        setCourses(data);
+      } catch {
         toast.error('Failed to fetch courses');
       }
     };
-
-    const checkAdmin = () => {
-      const role = localStorage.getItem('role'); // Retrieve role from localStorage
-      setIsAdmin(role === 'admin'); // Set isAdmin based on role
-    };
-
     fetchCourses();
-    checkAdmin();
+    setIsAdmin(localStorage.getItem('role') === 'admin');
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(
+      const { data } = await axios.post(
         'https://student-x.onrender.com/api/courses/posts',
         { courseName, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      const newCourse = {
-        ...response.data,
-        User: response.data.User || { name: 'Unknown' },
-      };
-
-      setCourses([...courses, newCourse]);
+      setCourses(prev => [...prev, data]);
       setCourseName('');
       setDescription('');
-      // setSuccess('Course posted successfully!');
-      // setTimeout(() => {
-      //   setSuccess(null);
-      // }, 3000);
       toast.success('Course posted successfully!');
-    } catch (err) {
-      // console.error('Error posting course:', err.response?.data || err.message);
-      // setError('Failed to post course');
+    } catch {
       toast.error('Failed to post course');
     }
   };
 
-  const handleDelete = async (courseId) => {
-    const token = localStorage.getItem('token');
+  const handleDelete = async id => {
     try {
-      await axios.delete(`https://student-x.onrender.com/api/admin/courses/${courseId}`, {
+      const token = localStorage.getItem('token');
+      await axios.delete(`https://student-x.onrender.com/api/admin/courses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      setCourses((prev) => prev.filter((course) => course.id !== courseId));
-    } catch (err) {
-      // console.error('Failed to delete course:', err.response?.data || err.message);
-      // alert('Failed to delete course');
+      setCourses(prev => prev.filter(c => c.id !== id));
+    } catch {
       toast.error('Failed to delete course');
     }
   };
 
-  const filteredCourses = courses.filter((course) =>
-    course.course_name?.toLowerCase().includes(search?.toLowerCase() || '') ||
-    course.users?.name?.toLowerCase().includes(search?.toLowerCase() || '')
+  const filteredCourses = courses.filter(c =>
+    c.course_name?.toLowerCase().includes(search?.toLowerCase() || '') ||
+    c.users?.name?.toLowerCase().includes(search?.toLowerCase() || '')
   );
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 p-8">
-      <p className="text-gray-600 text-lg mt-2">
-        These course listings are created by students who are offering to tutor others. You can reach out to them by clicking the <strong>"Contact Tutor"</strong> button. If you feel confident teaching a course, you’re welcome to share your own by clicking <strong>"Add a Course"</strong>.
-      </p>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Student-X Courses</h1>
+    <div className="min-h-screen bg-white text-gray-900 p-8 relative">
+      {/* Page‐info Modal */}
+      {showPageInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h2 className="text-2xl font-semibold mb-4">About This Page</h2>
+            <p className="text-gray-600 text-lg mb-4">
+              These course listings are created by students who are offering to tutor others.<br/> 
+              Learn directly from peers who’ve already taken the course.<br/>
+              Want to know exactly what’s covered? Click <strong>Contact Tutor</strong> to connect,  
+              or <strong>Add a Course</strong> to share your own.
+            </p>
+
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={closePageInfo}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Top bar: description, title + info icon, Add-Course */}
+
+
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center space-x-2">
+          <h1 className="text-3xl font-bold">Student-X Courses</h1>
+          <FontAwesomeIcon
+            icon={faCircleInfo}
+            bounce
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
+            onClick={openPageInfo}
+          />
+        </div>
         <button
           className="bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg"
           onClick={() => setIsModalOpen(true)}
@@ -101,33 +120,30 @@ const CoursesPage = () => {
         </button>
       </div>
 
-      {/* {success && <p className="text-green-600">{success}</p>}
-      {error && <p className="text-red-600">{error}</p>} */}
+      
+
       <ToastContainer />
 
+      {/* Courses Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCourses.map((course, index) => (
+        {filteredCourses.map((course, i) => (
           <div
-            key={index}
+            key={i}
             className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300"
           >
             <h2 className="text-xl font-semibold">{course.course_name}</h2>
             <p className="text-gray-600 mt-2">{course.description}</p>
-            <p className="text-gray-500 mt-2">Posted by: {course.users ? course.users.name : 'Unknown'}</p>
-
+            <p className="text-gray-500 mt-2">
+              Posted by: {course.users?.name || 'Unknown'}
+            </p>
             <div className="flex gap-2 mt-4">
-              {/* <button className="bg-black hover:bg-gray-800 transition-all duration-300 text-white py-2 px-4 rounded-lg">
-                Contact Tutor
-              </button> */}
               <a
-                  href={`/chatpage?tutor=${course.user_id}`} // Pass the course's tutor ID in the URL
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-black hover:bg-gray-800 transition-all duration-300 text-white py-2 px-4 rounded-lg"
-                >
-                  <p>Contact Tutor</p>
+                href={`/chatpage?tutor=${course.user_id}`}
+                target="_blank" rel="noopener noreferrer"
+                className="bg-black hover:bg-gray-800 transition-all duration-300 text-white py-2 px-4 rounded-lg"
+              >
+                Contact Tutor
               </a>
-
               {isAdmin && (
                 <button
                   onClick={() => handleDelete(course.id)}
@@ -141,6 +157,7 @@ const CoursesPage = () => {
         ))}
       </div>
 
+      {/* Add-Course Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -151,16 +168,16 @@ const CoursesPage = () => {
                 placeholder="Course Name"
                 className="w-full p-2 mb-4 border rounded"
                 value={courseName}
-                onChange={(e) => setCourseName(e.target.value)}
+                onChange={e => setCourseName(e.target.value)}
                 required
               />
               <textarea
                 placeholder="Course Description"
                 className="w-full p-2 mb-4 border rounded"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 required
-              ></textarea>
+              />
               <div className="flex justify-end">
                 <button
                   type="button"

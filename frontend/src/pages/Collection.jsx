@@ -5,6 +5,9 @@ import { ShopContext } from '../context/ShopContext';
 import supabase from "../supabaseClient";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const Collection = () => {
   const [listings, setListings] = useState([]);
@@ -14,6 +17,13 @@ const Collection = () => {
   const [newListing, setNewListing] = useState({ title: '', price: '', description: '', image_urls: [] });
   const [images, setImages] = useState([]); // NEW
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const [showPageInfo, setShowPageInfo] = useState(false)
+  library.add(faCircleInfo)
+
+
+  const openPageInfo = () => setShowPageInfo(true)
+  const closePageInfo = () => setShowPageInfo(false)
 
   const { search } = useContext(ShopContext);
   const navigate = useNavigate();
@@ -139,12 +149,18 @@ const Collection = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 p-8">
-      <p className="text-gray-700 mb-6 text-lg">
-        Browse through items posted for sale by fellow students at your university. From books and gadgets to fashion and more, these listings are shared by your peers. Want to get in touch with a seller? Just click on the <strong>Contact Seller</strong> button. Have something to sell yourself? Hit the <strong>Add an Item</strong> button and share your listing with the community!
-      </p>
+    <div className="min-h-screen bg-white text-gray-900 p-8 relative">
+      {/* Header with title + info icon + Add Item */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Student-X Listings</h1>
+        <div className="flex items-center space-x-2">
+          <h1 className="text-3xl font-bold">Student-X Listings</h1>
+          <FontAwesomeIcon
+            icon={faCircleInfo}
+            bounce
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
+            onClick={openPageInfo}
+          />
+        </div>
         <button
           className="bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg"
           onClick={() => setShowModal(true)}
@@ -156,6 +172,26 @@ const Collection = () => {
       {/* {success && <p className="text-green-600">{success}</p>}
       {error && <p className="text-red-600">{error}</p>} */}
       <ToastContainer />
+      {showPageInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-lg mx-4">
+            <h2 className="text-2xl font-semibold mb-4">About This Page</h2>
+            <p className="text-gray-700 mb-6 text-lg">
+              Browse through items posted for sale by fellow students at your university.<br/>   
+              From books and gadgets to fashion and more, these listings are shared by your peers. <br/>  
+              Want to get in touch with a seller? Just click on the <strong>Contact Seller</strong> button.  
+              Have something to sell yourself? Hit the <strong>Add an Item</strong> button and share your listing with the community!
+            </p>
+            <button
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={closePageInfo}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredListings.map((listing, index) => (

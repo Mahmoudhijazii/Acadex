@@ -1,137 +1,151 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import DormCard from '../components/DormCard';
 import supabase from "../supabaseClient";
+import SearchBar from '../components/SearchBar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ShopContext } from '../context/ShopContext';
+
+// FontAwesome imports
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+// add once (move to your app root if you prefer)
+library.add(faCircleInfo);
 
 const Dorm = () => {
   const navigate = useNavigate();
+  const { search } = useContext(ShopContext);
 
   const [dorm, setDorm] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showPageInfo, setShowPageInfo] = useState(false);
   const [images, setImages] = useState([]);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // handlers for the info modal
+  const openPageInfo = () => setShowPageInfo(true);
+  const closePageInfo = () => setShowPageInfo(false);
 
   useEffect(() => {
     const fetchDorms = async () => {
       try {
-        const dorm = await axios.get('https://student-x.onrender.com/api/dorms/posts');
-        // Parse image_urls from JSON string to array
-        const updatedDorms = dorm.data.map((d) => ({
-          ...d,
-          image_urls: d.image_urls ,
-        }));
-        setDorm(updatedDorms);
-      } catch (err) {
-        console.error(err);
-        // setError('Failed to fetch dorms');
+        const { data } = await axios.get('https://student-x.onrender.com/api/dorms/posts');
+        setDorm(data);
+      } catch {
         toast.error('Failed to fetch dorms');
       }
     };
 
-    const checkAdmin = () => {
-      const role = localStorage.getItem('role');
-      setIsAdmin(role === 'admin');
-    };
-
     fetchDorms();
-    checkAdmin();
+    setIsAdmin(localStorage.getItem('role') === 'admin');
   }, []);
 
-  const handleDelete = async (dormId) => {
-    const token = localStorage.getItem('token');
+  const handleDelete = async dormId => {
     try {
-      await axios.delete(`https://student-x.onrender.com/api/admin/dorms/delete/${dormId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setDorm((prev) => prev.filter((d) => d.id !== dormId));
-    } catch (err) {
-      // console.error('Failed to delete dorm:', err);
-      // alert('Failed to delete dorm');
+      const token = localStorage.getItem('token');
+      await axios.delete(
+        `https://student-x.onrender.com/api/admin/dorms/delete/${dormId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setDorm(prev => prev.filter(d => d.id !== dormId));
+    } catch {
       toast.error('Failed to delete dorm');
     }
   };
 
   const uploadImagesToSupabase = async () => {
     const urls = [];
-
     for (const file of images) {
       const fileName = `${Date.now()}-${file.name}`;
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('images')
         .upload(`dorm-images/${fileName}`, file);
-
       if (error) throw error;
-
-      const publicUrl = supabase.storage.from('images').getPublicUrl(`dorm-images/${fileName}`).data.publicUrl;
+      const publicUrl = supabase.storage
+        .from('images')
+        .getPublicUrl(`dorm-images/${fileName}`)
+        .data.publicUrl;
       urls.push(publicUrl);
     }
-
     return urls;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-
     if (images.length < 2 || images.length > 3) {
-      // setError('Please upload between 2 and 3 images.');
       toast.error('Please upload between 2 and 3 images.');
       return;
     }
-
     try {
       const token = localStorage.getItem('token');
       const uploadedUrls = await uploadImagesToSupabase();
-
-      console.log('Request Payload:', { title, description, location, price, image_urls: uploadedUrls });
-      const response = await axios.post(
+      const { data } = await axios.post(
         'https://student-x.onrender.com/api/admin/dorms/add',
-        {
-          title,
-          description,
-          location,
-          price,
-          image_urls: uploadedUrls,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { title, description, location, price, image_urls: uploadedUrls },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      const newDorm = {
-        ...response.data,
-        image_urls: uploadedUrls,
-      };
-
-      setDorm([...dorm, newDorm]);
+      setDorm(prev => [...prev, { ...data, image_urls: uploadedUrls }]);
       setTitle('');
       setLocation('');
       setPrice('');
       setDescription('');
       setImages([]);
-      // setSuccess('Dorm added successfully!');
-      // setTimeout(() => setSuccess(null), 3000);
       toast.success('Dorm added successfully!');
       setIsModalOpen(false);
-    } catch (err) {
-      console.error(err);
-      // setError('Failed to add dorm');
+    } catch {
       toast.error('Failed to add dorm');
     }
   };
 
+  // filter by location OR price substring
+  const filteredDorms = dorm.filter(d =>
+    d.location.toLowerCase().includes(search.toLowerCase()) ||
+    d.price.toString().includes(search)
+  );
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 p-8">
+    <div className="min-h-screen bg-white text-gray-900 p-8 relative">
+      {/* Page Info Modal */}
+      {showPageInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h2 className="text-2xl font-semibold mb-4">About This Page</h2>
+            <p className="text-gray-700 mb-4 text-lg">
+            <p className="text-gray-700 mb-6 text-lg">
+              Find the best dorms near campus all in one place.<br/>
+              Have questions or need more details? Click <strong>Contact Admin</strong> to get full info on any dorm.
+            </p>
+
+            </p>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={closePageInfo}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Find Your Perfect Dorm</h1>
+        <div className="flex items-center space-x-2">
+          <h1 className="text-3xl font-bold">Find Your Perfect Dorm</h1>
+          <FontAwesomeIcon
+            icon={faCircleInfo}
+            bounce
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
+            onClick={openPageInfo}
+          />
+        </div>
         {isAdmin && (
           <button
             className="bg-black hover:bg-gray-800 text-white py-2 px-4 rounded-lg"
@@ -142,14 +156,14 @@ const Dorm = () => {
         )}
       </div>
 
-      {/* {success && <p className="text-green-600">{success}</p>}
-      {error && <p className="text-red-600">{error}</p>} */}
+
       <ToastContainer />
 
+      {/* Dorm Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {dorm.map((dormItem, index) => (
+        {filteredDorms.map((dormItem, idx) => (
           <DormCard
-            key={index}
+            key={idx}
             image={dormItem.image_urls?.[0]}
             title={dormItem.title}
             location={dormItem.location}
@@ -161,6 +175,7 @@ const Dorm = () => {
         ))}
       </div>
 
+      {/* Upload Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -169,9 +184,8 @@ const Dorm = () => {
               <input
                 type="file"
                 multiple
-                // accept="image/*"
                 className="w-full p-2 mb-4 border rounded"
-                onChange={(e) => setImages([...e.target.files])}
+                onChange={e => setImages([...e.target.files])}
                 required
               />
               <input
@@ -179,7 +193,7 @@ const Dorm = () => {
                 placeholder="Title"
                 className="w-full p-2 mb-4 border rounded"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 required
               />
               <input
@@ -187,7 +201,7 @@ const Dorm = () => {
                 placeholder="Location"
                 className="w-full p-2 mb-4 border rounded"
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                onChange={e => setLocation(e.target.value)}
                 required
               />
               <input
@@ -195,16 +209,16 @@ const Dorm = () => {
                 placeholder="Price per month"
                 className="w-full p-2 mb-4 border rounded"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={e => setPrice(e.target.value)}
                 required
               />
               <textarea
                 placeholder="Description"
                 className="w-full p-2 mb-4 border rounded"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 required
-              ></textarea>
+              />
               <div className="flex justify-end">
                 <button
                   type="button"
