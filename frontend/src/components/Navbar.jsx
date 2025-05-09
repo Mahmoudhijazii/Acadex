@@ -297,6 +297,13 @@ const Navbar = () => {
 
       <div className='flex items-center gap-6'>
       {token && (
+        // <div>
+        // <button
+        //   className="bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-300 text-white py-2 px-4 rounded-lg mr-5"
+        //   onClick={() => setIsModalOpen(true)}
+        // >
+        //   Generate CV
+        // </button>
         <a href="/chatpage" target="_blank" rel="noopener noreferrer">
           <FontAwesomeIcon
             icon={['far', 'comments']}
@@ -304,6 +311,7 @@ const Navbar = () => {
             size="lg"
           />
         </a>
+        // </div>
       )}
 
 

@@ -17,6 +17,7 @@ const Collection = () => {
   const [newListing, setNewListing] = useState({ title: '', price: '', description: '', image_urls: [] });
   const [images, setImages] = useState([]); // NEW
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [showPageInfo, setShowPageInfo] = useState(false)
   library.add(faCircleInfo)
@@ -87,6 +88,7 @@ const Collection = () => {
 
   const handleCreateListing = async (e) => {
     e.preventDefault();
+    setLoading(true);
   
     if (images.length < 2 || images.length > 3) {
       // setError('Please upload between 2 and 3 images.');
@@ -131,6 +133,8 @@ const Collection = () => {
       console.error(err);
       // setError('Failed to add listing');
       toast.error('Failed to add listing');
+    } finally{
+      setLoading(false);
     }
   };
   
@@ -270,13 +274,23 @@ const Collection = () => {
                 className="w-full p-2 mb-4 border rounded"
                 required
               />
-              <input
+              {/* <input
                 type="file"
                 // accept="image/*"
                 multiple
                 onChange={(e) => setImages(Array.from(e.target.files))}
-              />
-              <div className="flex justify-end">
+              /> */}
+              <label className="mt-2 mb-4">
+                            <input 
+                                type="file" 
+                                className="hidden" 
+                                onChange={(e) => setImages(Array.from(e.target.files))} 
+                            />
+                            <div className="bg-black text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-800 text-center">
+                                Upload Pictures
+                            </div>
+                        </label>
+              <div className="flex justify-center mt-3">
                 <button
                   type="button"
                   className="mr-2 px-4 py-2 bg-gray-300 rounded"
@@ -284,11 +298,28 @@ const Collection = () => {
                 >
                   Cancel
                 </button>
-                <button
+                {/* <button
                   type="submit"
                   className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
                 >
                   Post
+                </button> */}
+                <button
+                  type="submit"
+                  className={`px-4 py-2 bg-black text-white rounded hover:bg-gray-800 flex justify-center items-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                      </svg>
+                      <span>Loading...</span>
+                    </>
+                  ) : (
+                    "Post"
+                  )}
                 </button>
               </div>
             </form>

@@ -8,7 +8,7 @@ const LatestCollection = () => {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const ids = [5, 6, 7, 8, 9]
+    const ids = [5, 7, 9, 11, 12]
     const fetchProducts = async () => {
       try {
         const results = await Promise.all(

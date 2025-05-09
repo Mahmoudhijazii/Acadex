@@ -24,7 +24,7 @@ const User = sequelize.define('User',
     },
     profile_picture : {
       type : DataTypes.STRING(255),
-      defaultValue : '/assets/default-profile.png'
+      defaultValue : 'https://cwifwvahtpldoallzzxl.supabase.co/storage/v1/object/public/images/profile-pictures/defPic.jpg'
     },
     bio : {
       type : DataTypes.TEXT
@@ -62,7 +62,7 @@ const TutorCourse = sequelize.define('TutorCourse',
     course_name : {
       type : DataTypes.STRING(100),
       allowNull : false,
-      unique : true 
+      // unique : true 
     },
     description: {
       type: DataTypes.TEXT, 

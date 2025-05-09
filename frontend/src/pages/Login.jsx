@@ -273,7 +273,7 @@ const Login = () => {
           <input
             type="email"
             className="w-full px-3 py-2 border border-gray-800"
-            placeholder="Email"
+            placeholder="University Email"
             required
             value={formData.email}
             onChange={e => setFormData({ ...formData, email: e.target.value })}
