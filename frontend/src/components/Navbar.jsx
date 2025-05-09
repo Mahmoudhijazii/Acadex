@@ -292,6 +292,7 @@ const Navbar = () => {
         <NavLink to='/courses' className='flex flex-col items-center gap-1'><p>COURSES</p></NavLink>
         <NavLink to='/dorms' className='flex flex-col items-center gap-1'><p>DORMS</p></NavLink>
         <NavLink to='/about' className='flex flex-col items-center gap-1'><p>ABOUT</p></NavLink>
+        <NavLink to='/' className='flex flex-col items-center gap-1'><p>GENERATE-CV</p></NavLink>
         
       </ul>
 
