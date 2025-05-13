@@ -117,8 +117,8 @@ const getProfile = async (req, res) => {
         const user = await User.findByPk(req.user.id, {
             attributes: ['name', 'email', 'profile_picture', 'bio'],
             include: [
-                { model: TutorCourse, attributes: ['course_name', 'description'],  as: 'tutor_courses' },
-                { model: Listing, attributes: ['title', 'price'], as: 'listings' }
+                { model: TutorCourse, attributes: ['id', 'course_name', 'description'],  as: 'tutor_courses' },
+                { model: Listing, attributes: ['id','title', 'price'], as: 'listings' }
             ]
         });
 
