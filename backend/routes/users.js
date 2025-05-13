@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture, getAllUsers, deleteCourse, deleteListing } = require('../controllers/usersController');
+const { signup, verifyUser, login, getProfile, getProfileById, updateProfile, updateProfilePicture, getAllUsers, deleteCourse, deleteListing } = require('../controllers/usersController');
 const multer = require('multer');
 const { authenticate } = require('../middleware/auth');
 const router = express.Router();
@@ -21,6 +21,7 @@ router.delete('/deleteListing/:id', authenticate, deleteListing);
 router.get('/all', getAllUsers);
 
 router.get('/profile', authenticate, getProfile); // Get user profile
+router.get('/profileById/:id', authenticate, getProfileById);
 router.put('/profile/update', authenticate, updateProfile); // Update name & bio
 router.put('/profile/picture', authenticate, updateProfilePicture);
 

@@ -132,6 +132,19 @@ const getProfile = async (req, res) => {
     }
 };
 
+const getProfileById = async (req , res) => {
+    const { id } =req.params;
+    try{
+        const user = await User.findByPk(id, {
+            attributes : ['name', 'email', 'profile_picture', 'bio']
+        });
+        if (!user) return res.status(400).json({error: 'User not found.'});
+        res.json(user);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({error: 'Error fetching profile'});
+    }
+};
 
 const updateProfile = async (req, res) => {
     const { name, bio } = req.body;
@@ -201,5 +214,5 @@ const deleteListing = async (req , res) => {
     }
 };
 
-module.exports = {signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture, getAllUsers, deleteCourse, deleteListing};
+module.exports = {signup, verifyUser, login, getProfile,getProfileById, updateProfile, updateProfilePicture, getAllUsers, deleteCourse, deleteListing};
 

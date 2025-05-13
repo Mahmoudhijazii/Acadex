@@ -424,6 +424,8 @@ const ChatPage = () => {
   const [newMessage, setNewMessage] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedUserProfile, setSelectedUserProfile] = useState(null);
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -553,6 +555,19 @@ const ChatPage = () => {
     }
   };
 
+  const openProfileModal = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`https://student-x.onrender.com/api/users/profileById/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSelectedUserProfile(response.data);
+      setShowProfileModal(true);
+    } catch (err) {
+      console.error("Failed to load profile:", err);
+    }
+  };
+
   if (isLoading) return null;
   if (!currentUserId) return null;
 
@@ -578,7 +593,16 @@ const ChatPage = () => {
       <div className="w-full sm:w-3/4 flex flex-col">
         {selectedUser ? (
           <>
-            <div className="p-4 border-b font-semibold bg-gray-50">Chat with {selectedUser.name || selectedUser.email}</div>
+            {/* <div className="p-4 border-b font-semibold bg-gray-50">Chat with {selectedUser.name || selectedUser.email}</div> */}
+            <div className="p-4 border-b font-semibold bg-gray-50 flex justify-between items-center">
+              <span>Chat with {selectedUser.name || selectedUser.email}</span>
+              <button
+                onClick={() => openProfileModal(selectedUser.id)}
+                className="text-blue-600 hover:underline text-sm"
+              >
+                View Profile
+              </button>
+            </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
               {messages.map(msg => (
                 <div
@@ -610,6 +634,26 @@ const ChatPage = () => {
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">
             Select a user to start chatting
+          </div>
+        )}
+        {showProfileModal && selectedUserProfile && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">User Profile</h2>
+                <button onClick={() => setShowProfileModal(false)} className="text-gray-600 hover:text-black">✕</button>
+              </div>
+              {selectedUserProfile.profile_picture && (
+                <img
+                  src={selectedUserProfile.profile_picture}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full mx-auto mb-4"
+                />
+              )}
+              <p><strong>Name:</strong> {selectedUserProfile.name}</p>
+              <p><strong>Email:</strong> {selectedUserProfile.email}</p>
+              <p><strong>Bio:</strong> {selectedUserProfile.bio || 'No bio available'}</p>
+            </div>
           </div>
         )}
       </div>
