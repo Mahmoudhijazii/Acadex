@@ -275,6 +275,40 @@ const Profile = () => {
         }
     };
 
+    const handleDeleteCourse = async (courseId) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`https://student-x.onrender.com/api/users/deleteCourse/${courseId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            toast.success("Course deleted");
+            setUser((prev) => ({
+                ...prev,
+                tutor_courses: prev.tutor_courses.filter(c => c.id !== courseId),
+            }));
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete course");
+        }
+    };
+    
+    const handleDeleteListing = async (listingId) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`https://student-x.onrender.com/api/users/deleteListing/${listingId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            toast.success("Listing deleted");
+            setUser((prev) => ({
+                ...prev,
+                listings: prev.listings.filter(l => l.id !== listingId),
+            }));
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete listing");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 p-8">
             <ToastContainer position="top-center" />
@@ -352,17 +386,34 @@ const Profile = () => {
                         {activeTab === "courses" ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {user?.tutor_courses?.map(course => (
-                                    <div key={course.course_name} className="bg-gray-100 p-4 rounded-lg shadow">
-                                        <p className="font-semibold">{course.course_name}</p>
+                                    <div key={course.id} className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
+                                        <div>
+                                            <p className="font-semibold">{course.course_name}</p>
+                                            <p className="text-sm text-gray-600">{course.description}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleDeleteCourse(course.id)}
+                                            className="text-red-600 hover:underline ml-4"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 ))}
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {user?.listings?.map(item => (
-                                    <div key={item.id} className="bg-gray-100 p-4 rounded-lg shadow">
-                                        <p className="font-semibold">{item.title}</p>
-                                        <p className="text-gray-600">${item.price}</p>
+                                    <div key={item.id} className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
+                                        <div>
+                                            <p className="font-semibold">{item.title}</p>
+                                            <p className="text-gray-600">${item.price}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleDeleteListing(item.id)}
+                                            className="text-red-600 hover:underline ml-4"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 ))}
                             </div>

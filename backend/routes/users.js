@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture, getAllUsers } = require('../controllers/usersController');
+const { signup, verifyUser, login, getProfile, updateProfile, updateProfilePicture, getAllUsers, deleteCourse, deleteListing } = require('../controllers/usersController');
 const multer = require('multer');
 const { authenticate } = require('../middleware/auth');
 const router = express.Router();
@@ -14,6 +14,9 @@ const router = express.Router();
 router.post('/signup', signup);
 router.post('/verify', verifyUser);
 router.post('/login', login);
+
+router.delete('/deleteCourse/:id', authenticate, deleteCourse);
+router.delete('/deleteListing/:id', authenticate, deleteListing);
 
 router.get('/all', getAllUsers);
 
